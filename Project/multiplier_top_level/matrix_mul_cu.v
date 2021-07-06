@@ -13,6 +13,7 @@ module matrix_mul_cu     #(parameter data_w = 32,
 								                            b_11,b_12,b_21,b_22,
 									output wire ram_we,
 									output wire done,err,
+									output wire block_mac_complete,
 									output wire [data_w-1:0] ram_w_data,
 									output wire [ram_add_w-1:0] ram_addr);
 
@@ -21,6 +22,7 @@ module matrix_mul_cu     #(parameter data_w = 32,
 // 1: reserved for metadata
 
 reg [4:0] r_state;//machine state
+reg [4:0] r_delay;//for waiting intervals
 
 reg [d_w_q-1:0] r_M1;
 reg [d_w_q-1:0] r_N1;
@@ -32,11 +34,17 @@ reg [d_w_q-1:0] r_counter_j;
 reg [d_w_q-1:0] r_counter_k;
 
 reg [ram_add_w-1:0] r_addr_a11;
+reg [ram_add_w-1:0] r_addr_a12;
 reg [ram_add_w-1:0] r_addr_a21;
+reg [ram_add_w-1:0] r_addr_a22;
 reg [ram_add_w-1:0] r_addr_b11;
+reg [ram_add_w-1:0] r_addr_b12;
 reg [ram_add_w-1:0] r_addr_b21;
+reg [ram_add_w-1:0] r_addr_b22;
 reg [ram_add_w-1:0] r_addr_c11;
+reg [ram_add_w-1:0] r_addr_c12;
 reg [ram_add_w-1:0] r_addr_c21;
+reg [ram_add_w-1:0] r_addr_c22;
 
 reg [d_w_q-1:0] r_limit_i;
 reg [d_w_q-1:0] r_limit_j;
@@ -52,8 +60,8 @@ reg 		 r_err;
 reg       r_ram_we;
 reg [data_w-1:0] r_ram_w_data;
 reg [ram_add_w-1:0] r_ram_addr;
-reg [data_w-1:0] r_a_11,r_a_12,r_a_21,r_a_22,
-					  r_b_11,r_b_12,r_b_21,r_b_22;
+reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
+					  r_b11,r_b12,r_b21,r_b22;
 reg		 r_start_mac;
 
 assign done = r_done;
@@ -62,15 +70,16 @@ assign ram_we = r_ram_we;
 assign ram_w_data = r_ram_w_data;
 assign ram_addr = r_ram_addr;
 assign start_mac = r_start_mac;
+assign block_mac_complete = done_mac;
 
-assign a_11 = r_a_11;
-assign a_12 = r_a_12;
-assign a_21 = r_a_21;
-assign a_22 = r_a_22;
-assign b_11 = r_b_11;
-assign b_12 = r_b_12;
-assign b_21 = r_b_21;
-assign b_22 = r_b_22;
+assign a_11 = r_a11;
+assign a_12 = r_a12;
+assign a_21 = r_a21;
+assign a_22 = r_a22;
+assign b_11 = r_b11;
+assign b_12 = r_b12;
+assign b_21 = r_b21;
+assign b_22 = r_b22;
 
 parameter STATE_IDLE 		 = 5'h0;
 parameter STATE_INIT 		 = 5'h1;
@@ -83,7 +92,10 @@ parameter STATE_RB12			 = 5'h7;
 parameter STATE_RB21			 = 5'h8;
 parameter STATE_RB22			 = 5'h9;
 parameter STATE_BEGINMAC	 = 5'hA;
-
+parameter STATE_WAIT			 = 5'hB;
+parameter STATE_ACCUMULATE  = 5'hC;
+parameter STATE_WAIT2		 = 5'hD;
+parameter STATE_WRITEBACK   = 5'hE;
 
 parameter STATE_CLIMIT	    = 5'h14;
 
@@ -104,9 +116,9 @@ begin
 					r_start_mac <= 'b0;
 					
 					if(start)
-						state <= STATE_INIT;
+						r_state <= STATE_INIT;
 					else
-						state <= STATE_IDLE;
+						r_state <= STATE_IDLE;
 				end
 				
 				STATE_INIT:
@@ -137,6 +149,8 @@ begin
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 					r_addr_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
 										    + ram_r_data[d_w_q*2-1:d_w_q];
+										
+					r_addr_c11 <= ram_d;
 
 					r_state <= STATE_RA11;
 				end
@@ -145,7 +159,7 @@ begin
 				
 				STATE_RA11:
 				begin
-					if(N1!=M2) begin
+					if(r_N1!=r_M2) begin
 						r_err <= 1'b1;	//raise error
 						r_state <= STATE_IDLE;
 					end 
@@ -154,7 +168,6 @@ begin
 					end
 					else 	begin
 						
-						// HOSH! bayad address haye a11 ina update beshe !!
 						
 						r_ram_addr <= r_addr_a11;
 						r_state <= STATE_RA12;
@@ -194,7 +207,7 @@ begin
 					else
 						r_a21 <= ram_r_data;
 					
-						r_state <= state_RB11;
+						r_state <= STATE_RB11;
 						r_ram_addr <= r_addr_a22;
 				end
 				
@@ -230,6 +243,7 @@ begin
 						
 						r_state <= STATE_RB22;
 						r_ram_addr <= r_addr_b21;
+					
 				end
 				
 				STATE_RB22:
@@ -239,8 +253,10 @@ begin
 						r_b21 <= 'b0;
 					else
 						r_b21 <= ram_r_data;
-						r_state <= state_BEGINMAC;
+						r_state <= STATE_BEGINMAC;
 						r_ram_addr <= r_addr_b22;
+					
+					
 				end
 				
 				
@@ -254,9 +270,67 @@ begin
 
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
 					r_state <= STATE_WAIT;
+					r_delay <= 5'd23;
+					
+					//HOSH! inja bayad update beshan address ha o ina <= injaro anjam bedam avalin kar / badesh ye run begiram bebinam addressa dorostan ya na
+					if(r_counter_k == r_limit_k) begin
+					
+						if(r_counter_j == r_limit_j) begin
+							r_counter_j <= 'b0;
+							r_counter_i <= r_counter_i + 1'b1;
+						end
+						
+						else begin
+							r_counter_k <= 'b0;
+							r_counter_j <= r_counter_j + 1'b1;
+						end
+						
+					end
+					
+				end
+				
+				//inja mishe eyne adam omad ye seri load e dge anjam dad.
+				STATE_WAIT:
+				begin
+					if((|r_delay)==1'b0) begin
+						r_state <= STATE_ACCUMULATE;
+					end
+					else begin
+						r_delay <= r_delay - 1'b1;
+						r_state <= STATE_WAIT;
+					end
 				end
 				
 				
+				STATE_ACCUMULATE:
+				begin
+					//inja bayad be adder, adad bedim, ke baramon accumulate kone (bordar ro)
+					
+					r_delay <= 5'd6;
+					r_state <= STATE_WAIT2;
+				end
+				
+				STATE_WAIT2:
+				begin
+					if((|r_delay)==1'b0) begin
+						//inja yeseri if darim, age lazem bod bere state e writeback, age na bargarde sare khone aval
+					end
+					else begin
+						r_delay <= r_delay - 1'b1;
+						r_state <= STATE_WAIT2;
+					end
+				end
+				
+				STATE_WRITEBACK:
+				begin
+				
+				end
+				
+				
+				default:
+				begin
+					r_state <= STATE_IDLE;
+				end
 			
 		endcase
 	end
