@@ -42,6 +42,8 @@ reg [d_w_q-1:0] r_limit_i;
 reg [d_w_q-1:0] r_limit_j;
 reg [d_w_q-1:0] r_limit_k;
 
+reg flag_is_piped;
+
 // i neshon mide row e chandom az matrix chapi hastim
 // j neshon mide col e chandom az matrix rasti hastim
 // k counter e sevom hast (col e chap = row e rast)
@@ -81,6 +83,9 @@ parameter STATE_RB11			 = 5'h6;
 parameter STATE_RB12			 = 5'h7;
 parameter STATE_RB21			 = 5'h8;
 parameter STATE_RB22			 = 5'h9;
+parameter STATE_RB22F		 = 5'hA;
+parameter STATE_BEGINMAC	 = 5'hB;
+
 
 parameter STATE_CLIMIT	    = 5'h14;
 
@@ -89,7 +94,7 @@ always @ (posedge clk)
 begin
 
 	if(rst) begin
-		r_state <= STATE_IDLE
+		r_state <= STATE_IDLE;
 	end
 	else    begin
 		case (r_state)
@@ -99,6 +104,7 @@ begin
 					r_ram_we <= 'b0;
 					r_ram_addr <= 'b0; //to prepare parameters
 					r_start_mac <= 'b0;
+					flag_is_piped <= 'b0;
 					
 					if(start)
 						state <= STATE_INIT;
@@ -125,9 +131,14 @@ begin
 					r_counter_k <= 'b0;
 					
 					r_addr_a11 <= 9'd2;
+					r_addr_a12 <= 9'd3;
 					r_addr_a21 <= 9'd2 + ram_r_data[d_w_q*4-1:d_w_q*3];
+					r_addr_a22 <= 9'd3 + ram_r_data[d_w_q*4-1:d_w_q*3];
 					r_addr_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
+					r_addr_b12 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
 					r_addr_b21 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
+										    + ram_r_data[d_w_q*2-1:d_w_q];
+					r_addr_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 
 					r_state <= STATE_RA11;
@@ -139,12 +150,12 @@ begin
 						r_err <= 1'b1;	//raise error
 						r_state <= STATE_IDLE;
 					end 
-					else if(r_limit_i == r_counter_i) begin
+					else if(r_limit_i == r_counter_i && (!flag_is_piped)) begin
 						r_state <= STATE_CLIMIT;
 					end
 					else 	begin
 						
-						// HOSH! inja bayad address haye a11 ina update beshe !!
+						// HOSH! bayad address haye a11 ina update beshe !!
 						
 						r_ram_addr <= r_addr_a11;
 						r_state <= STATE_RA12;
@@ -154,46 +165,105 @@ begin
 				STATE_RA12:
 				begin
 					r_a11 <= ram_r_data;
-					if(r_limit_k==r_counter_k && r_M1[0]) begin
-						//yani in ab'ad e matrice fard bode va be tah residim, 0 por mikonim
-						r_a12 <= 'b0;
-						r_ram_addr <= r_addr_a21;
-						r_state <= STATE_RA22;
-					end
-					else begin
-						r_state <= STATE_RA21;
-						r_ram_addr <= r_addr_a12;
-					end
+					r_state <= STATE_RA21;
+					r_ram_addr <= r_addr_a12;
 				end
 				
 				STATE_RA21:
 				begin
-					if(r_limit_i==r_counter_i &&
+					
+					if(r_limit_k==r_counter_k && r_M1[0])
+						r_a12 <= 'b0;
+					else 
+						r_a12 <= ram_r_data;
+						
+						r_state <= STATE_RA22;
+						r_ram_addr <= r_addr_a21;
 				end
 				
 				STATE_RA22:
 				begin
-				
+					
+					if(r_limit_i==r_counter_i && r_N1[0]) 
+						r_a21 <= 'b0;
+					else
+						r_a21 <= ram_r_data;
+					
+						r_state <= state_RB11;
+						r_ram_addr <= r_addr_a22;
 				end
 				
 				STATE_RB11:
 				begin
 				
+					if((r_limit_i==r_counter_i && r_N1[0]) || r_limit_k==r_counter_k && r_M1[0])
+						r_a22 <= 'b0;
+					else
+						r_a22 <= ram_r_data;
+						
+					r_ram_addr <= r_addr_b11;
+					r_state <= STATE_RB12;
 				end
 				
 				STATE_RB12:
 				begin
-				
+					r_b11 <= ram_r_data;
+					r_state <= STATE_RB21;
+					r_ram_addr <= r_addr_b12;
+					
+					
+						
 				end
 				
 				STATE_RB21:
 				begin
-				
+					
+					
+		
+					
+					if(r_limit_j==r_counter_j && r_M2[0])
+						r_b12 <= 'b0;
+					else
+						r_b12 <= ram_r_data;
+						
+						r_state <= STATE_RB22;
+						r_ram_addr <= r_addr_b21;
 				end
 				
 				STATE_RB22:
 				begin
+					
+					if(r_limit_k==r_counter_k && r_N2[0])
+						r_b21 <= 'b0;
+					else
+						r_b21 <= ram_r_data;
+						r_state <= state_BEGINMAC;
+						r_ram_addr <= r_addr_b22;
+
+				end
 				
+				
+				STATE_BEGINMAC:
+				begin
+					
+					if((r_limit_k==r_counter_k && r_N2[0]) || r_limit_j==r_counter_j && r_M2[0])
+						r_b22 <= 'b0;
+					else
+						r_b22 <= ram_r_data;
+
+					
+					 r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
+					
+					if(!flag_is_piped) begin
+					
+						r_state <= STATE_RA11;
+						flag_is_piped <= 1'b1;
+						
+					end
+					else begin
+						flag_is_piped <= 1'b0;
+						r_state <= STATE_WAIT;
+					end
 				end
 			
 		endcase
