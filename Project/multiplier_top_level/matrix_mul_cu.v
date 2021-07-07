@@ -296,10 +296,12 @@ begin
 					r_state <= STATE_WAIT;
 					r_delay <= 5'd23;
 					
-					//HOSH! inja bayad update beshan address ha o ina <= injaro anjam bedam avalin kar / badesh ye run begiram bebinam addressa dorostan ya na
-					if(r_counter_k == r_limit_k) begin
+					r_counter_k <= r_counter_k + 1'b1;
+					
+					if(r_counter_k == r_limit_k) begin //inja yani i ziad shode
 					
 						if(r_counter_j == r_limit_j) begin
+							r_counter_k <= 'b0;
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
 							
@@ -320,7 +322,7 @@ begin
 							
 						end
 						
-						else begin
+						else begin //inja yani j ziad shode
 							r_counter_k <= 'b0;
 							r_counter_j <= r_counter_j + 1'b1;
 							
@@ -346,9 +348,9 @@ begin
 						r_addr_a21 <= r_addr_a22 + 1'b1;
 						r_addr_a22 <= r_addr_a22 + 2'b10;
 						
-						r_addr_b11 <= r_addr_b12 + 1'b1;
-						r_addr_b12 <= r_addr_b12 + 2'b10;
-						r_addr_b21 <= r_addr_b22 + 1'b1;
+						r_addr_b11 <= r_addr_b21 + 1'b1;
+						r_addr_b12 <= r_addr_b22 + 1'b1;
+						r_addr_b21 <= r_addr_b21 + 2'b10;
 						r_addr_b22 <= r_addr_b22 + 2'b10;
 					end
 					
@@ -379,6 +381,7 @@ begin
 				begin
 					if((|r_delay)==1'b0) begin
 						//inja yeseri if darim, age lazem bod bere state e writeback, age na bargarde sare khone aval
+						r_state <= STATE_RA11;
 					end
 					else begin
 						r_delay <= r_delay - 1'b1;
