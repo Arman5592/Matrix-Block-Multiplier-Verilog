@@ -141,9 +141,9 @@ begin
 					r_M2 <= ram_r_data[d_w_q*2-1:d_w_q];
 					r_N2 <= ram_r_data[d_w_q-1:0];
 					
-					r_limit_i <= (ram_r_data[d_w_q*4-1:d_w_q*3] + 1'b1) >>> 1'b1;
-					r_limit_j <= (ram_r_data[d_w_q-1:0]   + 1'b1) >>> 1'b1;
-					r_limit_k <= (ram_r_data[d_w_q*2-1:d_w_q]  + 1'b1) >>> 1'b1;
+					r_limit_i <= ((ram_r_data[d_w_q*4-1:d_w_q*3] + 1'b1) >>> 1'b1);
+					r_limit_j <= ((ram_r_data[d_w_q-1:0]   + 1'b1) >>> 1'b1)-1'b1;
+					r_limit_k <= ((ram_r_data[d_w_q*2-1:d_w_q]  + 1'b1) >>> 1'b1)-1'b1;
 					
 					r_err <= 'b0;
 					r_done <= 'b0;
@@ -187,12 +187,9 @@ begin
 						r_err <= 1'b1;	//raise error
 						r_state <= STATE_IDLE;
 					end 
-					else if(r_limit_i == r_counter_i) begin
+					else if(r_limit_i == r_counter_i)
 						r_state <= STATE_CLIMIT;
-					end
 					else 	begin
-						
-						
 						r_ram_addr <= r_addr_a11;
 						r_state <= STATE_RA12;
 					end
@@ -291,24 +288,24 @@ begin
 						r_b22 <= 'b0;
 					else
 						r_b22 <= ram_r_data;
-
+					
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
 					r_state <= STATE_WAIT;
 					r_delay <= 5'd23;
 					
 					r_counter_k <= r_counter_k + 1'b1;
 					
-					if(r_counter_k == r_limit_k) begin //inja yani i ziad shode
+					if(r_counter_k == r_limit_k) begin 
 					
-						if(r_counter_j == r_limit_j) begin
+						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode
 							r_counter_k <= 'b0;
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
 							
-							r_addr_a11 <= r_addr_a21 + r_N1;
-							r_addr_a12 <= r_addr_a22 + r_N1;
-							r_addr_a21 <= r_addr_a21 + w_2N1;
-							r_addr_a22 <= r_addr_a22 + w_2N1;
+							r_addr_a11 <= r_addr_a22 + 1'b1;
+							r_addr_a12 <= r_addr_a22 + 2'b10;
+							r_addr_a21 <= r_addr_a22 + r_N1 + 1'b1;
+							r_addr_a22 <= r_addr_a22 + r_N1 + 2'b10;
 							
 							r_addr_b11 <= r_start_b11;
 							r_addr_b12 <= r_start_b12;
@@ -326,15 +323,15 @@ begin
 							r_counter_k <= 'b0;
 							r_counter_j <= r_counter_j + 1'b1;
 							
-							r_addr_a11 <= r_addr_a11 - r_N1;
-							r_addr_a12 <= r_addr_a12 - r_N1;
-							r_addr_a21 <= r_addr_a21 - r_N1;
-							r_addr_a22 <= r_addr_a22 - r_N1;
+							r_addr_a11 <= r_addr_a11 - r_N1 + 2'b10;
+							r_addr_a12 <= r_addr_a12 - r_N1 + 2'b10;
+							r_addr_a21 <= r_addr_a21 - r_N1 + 2'b10;
+							r_addr_a22 <= r_addr_a22 - r_N1 + 2'b10;
 						
-							r_addr_b11 <= r_addr_b21 + r_N2;
-							r_addr_b12 <= r_addr_b22 + r_N2;
-							r_addr_b21 <= r_addr_b21 + w_2N2;
-							r_addr_b22 <= r_addr_b22 + w_2N2;
+							r_addr_b11 <= r_addr_b22 + 1'b1;
+							r_addr_b12 <= r_addr_b22 + r_N2 + 1'b1;
+							r_addr_b21 <= r_addr_b22 + 2'b10;
+							r_addr_b22 <= r_addr_b22 + r_N2 + 2'b10;
 							
 							r_addr_c11 <= r_addr_c11 - 2'b10;
 							r_addr_c12 <= r_addr_c12 - 2'b10;
