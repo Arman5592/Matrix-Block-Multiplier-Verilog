@@ -1,0 +1,804 @@
+Analysis & Synthesis report for matrix_multiplier
+Wed Jul 07 14:02:34 2021
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. State Machine - |matrix_multiplier|matrix_mul_cu:control_unit|r_state
+  9. Registers Removed During Synthesis
+ 10. Removed Registers Triggering Further Register Optimizations
+ 11. General Register Statistics
+ 12. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 13. Parameter Settings for User Entity Instance: Top-level Entity: |matrix_multiplier
+ 14. Parameter Settings for User Entity Instance: matrix_mul_cu:control_unit
+ 15. Parameter Settings for User Entity Instance: ram:memory
+ 16. Parameter Settings for Inferred Entity Instance: matrix_mul_cu:control_unit|lpm_mult:Mult0
+ 17. lpm_mult Parameter Settings by Entity Instance
+ 18. Port Connectivity Checks: "ram:memory"
+ 19. Port Connectivity Checks: "matrix_mul_cu:control_unit"
+ 20. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2020  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++---------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                              ;
++-----------------------------+---------------------------------------------+
+; Analysis & Synthesis Status ; Successful - Wed Jul 07 14:02:34 2021       ;
+; Quartus Prime Version       ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
+; Revision Name               ; matrix_multiplier                           ;
+; Top-level Entity Name       ; matrix_multiplier                           ;
+; Family                      ; MAX V                                       ;
+; Total logic elements        ; 0                                           ;
+; Total pins                  ; 5                                           ;
+; Total virtual pins          ; 0                                           ;
+; UFM blocks                  ; 0 / 1 ( 0 % )                               ;
++-----------------------------+---------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                              ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                           ; Setting            ; Default Value      ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Top-level entity name                                            ; matrix_multiplier  ; matrix_multiplier  ;
+; Family name                                                      ; MAX V              ; Cyclone V          ;
+; Use smart compilation                                            ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                      ; Off                ; Off                ;
+; Restructure Multiplexers                                         ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                              ; Off                ; Off                ;
+; Preserve fewer node names                                        ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                    ; Enable             ; Enable             ;
+; Verilog Version                                                  ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                     ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                         ; Auto               ; Auto               ;
+; Safe State Machine                                               ; Off                ; Off                ;
+; Extract Verilog State Machines                                   ; On                 ; On                 ;
+; Extract VHDL State Machines                                      ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                       ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                   ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                          ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                        ; On                 ; On                 ;
+; Parallel Synthesis                                               ; On                 ; On                 ;
+; NOT Gate Push-Back                                               ; On                 ; On                 ;
+; Power-Up Don't Care                                              ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                     ; Off                ; Off                ;
+; Remove Duplicate Registers                                       ; On                 ; On                 ;
+; Ignore CARRY Buffers                                             ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                           ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                            ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                        ; Off                ; Off                ;
+; Ignore LCELL Buffers                                             ; Off                ; Off                ;
+; Ignore SOFT Buffers                                              ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                   ; Off                ; Off                ;
+; Optimization Technique                                           ; Balanced           ; Balanced           ;
+; Carry Chain Length                                               ; 70                 ; 70                 ;
+; Auto Carry Chains                                                ; On                 ; On                 ;
+; Auto Open-Drain Pins                                             ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                            ; Off                ; Off                ;
+; Auto Shift Register Replacement                                  ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                  ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                    ; On                 ; On                 ;
+; Allow Synchronous Control Signals                                ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                           ; Off                ; Off                ;
+; Auto Resource Sharing                                            ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing              ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                ; Off                ; Off                ;
+; Report Parameter Settings                                        ; On                 ; On                 ;
+; Report Source Assignments                                        ; On                 ; On                 ;
+; Report Connectivity Checks                                       ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                               ; Off                ; Off                ;
+; Synchronization Register Chain Length                            ; 2                  ; 2                  ;
+; Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                  ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report         ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report               ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report        ; 100                ; 100                ;
+; Clock MUX Protection                                             ; On                 ; On                 ;
+; Block Design Naming                                              ; Auto               ; Auto               ;
+; Synthesis Effort                                                 ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal     ; On                 ; On                 ;
+; Analysis & Synthesis Message Level                               ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                      ; Auto               ; Auto               ;
++------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 4           ;
+; Maximum allowed            ; 4           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 1           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
++----------------------------+-------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                               ;
++----------------------------------------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path                               ; Used in Netlist ; File Type              ; File Name with Absolute Path                                                                   ; Library ;
++----------------------------------------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
+; ../DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v ; yes             ; User Verilog HDL File  ; C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v ;         ;
+; matrix_multiplier.v                                            ; yes             ; User Verilog HDL File  ; C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v                    ;         ;
+; ram.v                                                          ; yes             ; User Verilog HDL File  ; C:/Users/arman/Desktop/dsd_project/multiplier_top_level/ram.v                                  ;         ;
+; lpm_mult.tdf                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_mult.tdf                            ;         ;
+; aglobal201.inc                                                 ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/aglobal201.inc                          ;         ;
+; lpm_add_sub.inc                                                ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.inc                         ;         ;
+; multcore.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.inc                            ;         ;
+; bypassff.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/bypassff.inc                            ;         ;
+; altshift.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/altshift.inc                            ;         ;
+; multcore.tdf                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf                            ;         ;
+; csa_add.inc                                                    ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/csa_add.inc                             ;         ;
+; mpar_add.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mpar_add.inc                            ;         ;
+; muleabz.inc                                                    ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/muleabz.inc                             ;         ;
+; mul_lfrg.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mul_lfrg.inc                            ;         ;
+; mul_boothc.inc                                                 ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mul_boothc.inc                          ;         ;
+; alt_ded_mult.inc                                               ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/alt_ded_mult.inc                        ;         ;
+; alt_ded_mult_y.inc                                             ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/alt_ded_mult_y.inc                      ;         ;
+; dffpipe.inc                                                    ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/dffpipe.inc                             ;         ;
+; mpar_add.tdf                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mpar_add.tdf                            ;         ;
+; lpm_add_sub.tdf                                                ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf                         ;         ;
+; addcore.inc                                                    ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.inc                             ;         ;
+; look_add.inc                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/look_add.inc                            ;         ;
+; alt_stratix_add_sub.inc                                        ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/alt_stratix_add_sub.inc                 ;         ;
+; addcore.tdf                                                    ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.tdf                             ;         ;
+; a_csnbuffer.inc                                                ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/a_csnbuffer.inc                         ;         ;
+; a_csnbuffer.tdf                                                ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/a_csnbuffer.tdf                         ;         ;
+; altshift.tdf                                                   ; yes             ; Megafunction           ; q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/altshift.tdf                            ;         ;
++----------------------------------------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
+
+
++-----------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary         ;
++---------------------------------------------+-------+
+; Resource                                    ; Usage ;
++---------------------------------------------+-------+
+; Total logic elements                        ; 0     ;
+;     -- Combinational with no register       ; 0     ;
+;     -- Register only                        ; 0     ;
+;     -- Combinational with a register        ; 0     ;
+;                                             ;       ;
+; Logic element usage by number of LUT inputs ;       ;
+;     -- 4 input functions                    ; 0     ;
+;     -- 3 input functions                    ; 0     ;
+;     -- 2 input functions                    ; 0     ;
+;     -- 1 input functions                    ; 0     ;
+;     -- 0 input functions                    ; 0     ;
+;                                             ;       ;
+; Logic elements by mode                      ;       ;
+;     -- normal mode                          ; 0     ;
+;     -- arithmetic mode                      ; 0     ;
+;     -- qfbk mode                            ; 0     ;
+;     -- register cascade mode                ; 0     ;
+;     -- synchronous clear/load mode          ; 0     ;
+;     -- asynchronous clear/load mode         ; 0     ;
+;                                             ;       ;
+; Total registers                             ; 0     ;
+; I/O pins                                    ; 5     ;
++---------------------------------------------+-------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                      ;
++----------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+---------------------+-------------------+--------------+
+; Compilation Hierarchy Node ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name ; Entity Name       ; Library Name ;
++----------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+---------------------+-------------------+--------------+
+; |matrix_multiplier         ; 0 (0)       ; 0            ; 0          ; 5    ; 0            ; 0 (0)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |matrix_multiplier  ; matrix_multiplier ; work         ;
++----------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+---------------------+-------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |matrix_multiplier|matrix_mul_cu:control_unit|r_state                                                                                                                                                                                                                                                                                                                      ;
++--------------------------+-------------------------+---------------------+--------------------------+--------------------+------------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+
+; Name                     ; r_state.STATE_WRITEBACK ; r_state.STATE_WAIT2 ; r_state.STATE_ACCUMULATE ; r_state.STATE_WAIT ; r_state.STATE_BEGINMAC ; r_state.STATE_RB22 ; r_state.STATE_RB21 ; r_state.STATE_RB12 ; r_state.STATE_RB11 ; r_state.STATE_RA22 ; r_state.STATE_RA21 ; r_state.STATE_RA12 ; r_state.STATE_RA11 ; r_state.STATE_INIT ; r_state.STATE_IDLE ; r_state.STATE_CLIMIT ;
++--------------------------+-------------------------+---------------------+--------------------------+--------------------+------------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+
+; r_state.STATE_IDLE       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                    ;
+; r_state.STATE_INIT       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 1                  ; 0                    ;
+; r_state.STATE_RA11       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RA12       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RA21       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RA22       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RB11       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 1                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RB12       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 1                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RB21       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 1                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_RB22       ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 1                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_BEGINMAC   ; 0                       ; 0                   ; 0                        ; 0                  ; 1                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_WAIT       ; 0                       ; 0                   ; 0                        ; 1                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_ACCUMULATE ; 0                       ; 0                   ; 1                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_WAIT2      ; 0                       ; 1                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_WRITEBACK  ; 1                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 0                    ;
+; r_state.STATE_CLIMIT     ; 0                       ; 0                   ; 0                        ; 0                  ; 0                      ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 0                  ; 1                  ; 1                    ;
++--------------------------+-------------------------+---------------------+--------------------------+--------------------+------------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+
+
+
++-------------------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                          ;
++-----------------------------------------------------+-------------------------------------------------------+
+; Register name                                       ; Reason for Removal                                    ;
++-----------------------------------------------------+-------------------------------------------------------+
+; matrix_mul_cu:control_unit|r_done                   ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_k[7]             ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_j[7]             ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_i[7]             ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_ram_we                 ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_counter_k[1..7]        ; Merged with matrix_mul_cu:control_unit|r_counter_k[0] ;
+; matrix_mul_cu:control_unit|r_start_b11[0]           ; Merged with matrix_mul_cu:control_unit|r_start_b21[0] ;
+; ram:memory|do[0,1,3..9,11..17,19..25,27..31]        ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_N2[0,1,3..7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_N1[0,1,3..7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_M2[0,1,3..7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_i[0,2..6]        ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_k[0,2..6]        ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_j[0,2..6]        ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[6]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[6]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[7]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[8]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[8]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[8]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[8]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_counter_k[0]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_limit_k[1]             ; Merged with matrix_mul_cu:control_unit|r_M2[2]        ;
+; ram:memory|do[2,18,26]                              ; Merged with ram:memory|do[10]                         ;
+; matrix_mul_cu:control_unit|r_M2[2]                  ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_N1[2]                  ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_N2[2]                  ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_limit_i[1]             ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_start_b21[0]           ; Merged with matrix_mul_cu:control_unit|r_start_b22[0] ;
+; matrix_mul_cu:control_unit|r_start_b21[1]           ; Merged with matrix_mul_cu:control_unit|r_start_b22[1] ;
+; matrix_mul_cu:control_unit|r_start_b11[1]           ; Merged with matrix_mul_cu:control_unit|r_start_b12[1] ;
+; matrix_mul_cu:control_unit|r_state~18               ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state~19               ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state~20               ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state~21               ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_WRITEBACK  ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[6]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[0,6]         ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[0,1]         ; Stuck at VCC due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[1]           ; Stuck at VCC due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[5]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[5]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[2]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[2]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[3]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b21[3]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[3]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b11[3]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[5]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b12[5]           ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_start_b22[2]           ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_start_b12[2]           ; Merged with matrix_mul_cu:control_unit|r_limit_j[1]   ;
+; matrix_mul_cu:control_unit|r_start_b12[4]           ; Merged with matrix_mul_cu:control_unit|r_start_b22[4] ;
+; matrix_mul_cu:control_unit|r_start_b21[4]           ; Merged with matrix_mul_cu:control_unit|r_start_b22[4] ;
+; matrix_mul_cu:control_unit|r_start_b11[4]           ; Merged with matrix_mul_cu:control_unit|r_start_b22[4] ;
+; matrix_mul_cu:control_unit|r_err                    ; Stuck at GND due to stuck port data_in                ;
+; matrix_mul_cu:control_unit|r_state.STATE_RA11       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_INIT       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_CLIMIT     ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_IDLE       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_limit_j[1]             ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_counter_i[0..7]        ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_delay[0..4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_WAIT2      ; Lost fanout                                           ;
+; ram:memory|do[10]                                   ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_BEGINMAC   ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_counter_j[0..7]        ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_ACCUMULATE ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_WAIT       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_ram_addr[0..8]         ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RB22       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RB21       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RB12       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RB11       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RA22       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RA21       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_state.STATE_RA12       ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[0]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[1]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[2]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[3]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[4]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[5]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[6]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[7]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b22[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b21[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b12[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_b11[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a22[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a21[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a12[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_addr_a11[8]            ; Lost fanout                                           ;
+; matrix_mul_cu:control_unit|r_start_b22[4]           ; Lost fanout                                           ;
+; Total Number of Removed Registers = 249             ;                                                       ;
++-----------------------------------------------------+-------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                                          ;
++----------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
+; Register name                                      ; Reason for Removal        ; Registers Removed due to This Register                                              ;
++----------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
+; matrix_mul_cu:control_unit|r_ram_we                ; Stuck at GND              ; ram:memory|do[23], ram:memory|do[22], ram:memory|do[21], ram:memory|do[20],         ;
+;                                                    ; due to stuck port data_in ; ram:memory|do[19], ram:memory|do[17], ram:memory|do[16], ram:memory|do[15],         ;
+;                                                    ;                           ; ram:memory|do[14], ram:memory|do[13], ram:memory|do[12], ram:memory|do[11],         ;
+;                                                    ;                           ; ram:memory|do[9], ram:memory|do[8], ram:memory|do[25], ram:memory|do[24],           ;
+;                                                    ;                           ; ram:memory|do[27], ram:memory|do[28], ram:memory|do[29], ram:memory|do[30],         ;
+;                                                    ;                           ; ram:memory|do[31], ram:memory|do[1], ram:memory|do[0], ram:memory|do[3],            ;
+;                                                    ;                           ; ram:memory|do[4], ram:memory|do[5], ram:memory|do[6], ram:memory|do[7],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N2[7], matrix_mul_cu:control_unit|r_N2[6],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N2[5], matrix_mul_cu:control_unit|r_N2[4],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N2[3], matrix_mul_cu:control_unit|r_N2[1],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N2[0], matrix_mul_cu:control_unit|r_N1[7],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N1[6], matrix_mul_cu:control_unit|r_N1[5],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N1[4], matrix_mul_cu:control_unit|r_N1[3],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_N1[1], matrix_mul_cu:control_unit|r_N1[0],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_M2[7], matrix_mul_cu:control_unit|r_M2[6],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_M2[5], matrix_mul_cu:control_unit|r_M2[4],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_M2[3], matrix_mul_cu:control_unit|r_M2[1],             ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_M2[0], matrix_mul_cu:control_unit|r_limit_i[6],        ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_i[5], matrix_mul_cu:control_unit|r_limit_i[4],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_i[3], matrix_mul_cu:control_unit|r_limit_i[2],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_i[0], matrix_mul_cu:control_unit|r_limit_k[6],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_k[5], matrix_mul_cu:control_unit|r_limit_k[4],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_k[3], matrix_mul_cu:control_unit|r_limit_k[2],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_k[0], matrix_mul_cu:control_unit|r_limit_j[6],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_j[5], matrix_mul_cu:control_unit|r_limit_j[4],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_j[3], matrix_mul_cu:control_unit|r_limit_j[2],   ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_j[0], matrix_mul_cu:control_unit|r_start_b22[6], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b12[6],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b12[0],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b22[0],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b22[1],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b12[1],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b21[5],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b11[5],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b21[2],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b11[2],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b22[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b21[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b12[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b11[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b22[5],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b12[5], matrix_mul_cu:control_unit|r_err,        ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_limit_j[1], matrix_mul_cu:control_unit|r_delay[4],     ;
+;                                                    ;                           ; ram:memory|do[10], matrix_mul_cu:control_unit|r_counter_j[2],                       ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[4],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[7],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_ram_addr[0], matrix_mul_cu:control_unit|r_ram_addr[1], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_ram_addr[2], matrix_mul_cu:control_unit|r_ram_addr[3], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_ram_addr[4], matrix_mul_cu:control_unit|r_ram_addr[5], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_ram_addr[6], matrix_mul_cu:control_unit|r_ram_addr[7], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_ram_addr[8], matrix_mul_cu:control_unit|r_addr_b22[0], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b21[0], matrix_mul_cu:control_unit|r_addr_b12[0], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b11[0], matrix_mul_cu:control_unit|r_addr_a22[0], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a21[0], matrix_mul_cu:control_unit|r_addr_a12[0], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b22[1], matrix_mul_cu:control_unit|r_addr_b21[1], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b12[1], matrix_mul_cu:control_unit|r_addr_b11[1], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a22[1], matrix_mul_cu:control_unit|r_addr_a21[1], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a12[1], matrix_mul_cu:control_unit|r_addr_b22[2], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b21[2], matrix_mul_cu:control_unit|r_addr_b12[2], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b11[2], matrix_mul_cu:control_unit|r_addr_a22[2], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a21[2], matrix_mul_cu:control_unit|r_addr_a12[2], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b22[3], matrix_mul_cu:control_unit|r_addr_b21[3], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b12[3], matrix_mul_cu:control_unit|r_addr_b11[3], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a22[3], matrix_mul_cu:control_unit|r_addr_a21[3], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a12[3], matrix_mul_cu:control_unit|r_addr_b22[4], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b21[4], matrix_mul_cu:control_unit|r_addr_b12[4], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b11[4], matrix_mul_cu:control_unit|r_addr_a22[4], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a21[4], matrix_mul_cu:control_unit|r_addr_a12[4], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b22[5], matrix_mul_cu:control_unit|r_addr_b21[5], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b12[5], matrix_mul_cu:control_unit|r_addr_b11[5], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a22[5], matrix_mul_cu:control_unit|r_addr_a21[5], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a12[5], matrix_mul_cu:control_unit|r_addr_b22[6], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b21[6], matrix_mul_cu:control_unit|r_addr_b12[6], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b11[6], matrix_mul_cu:control_unit|r_addr_a22[6], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a21[6], matrix_mul_cu:control_unit|r_addr_a12[6], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b22[7], matrix_mul_cu:control_unit|r_addr_b21[7], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b12[7], matrix_mul_cu:control_unit|r_addr_b11[7], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a22[7], matrix_mul_cu:control_unit|r_addr_a21[7], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a12[7], matrix_mul_cu:control_unit|r_addr_b22[8], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b21[8], matrix_mul_cu:control_unit|r_addr_b12[8], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_b11[8], matrix_mul_cu:control_unit|r_addr_a22[8], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a21[8], matrix_mul_cu:control_unit|r_addr_a12[8]  ;
+; matrix_mul_cu:control_unit|r_limit_i[7]            ; Stuck at GND              ; matrix_mul_cu:control_unit|r_counter_i[1],                                          ;
+;                                                    ; due to stuck port data_in ; matrix_mul_cu:control_unit|r_counter_i[0],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[2],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[3],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[4],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[5],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[6],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_i[7],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[1],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[0],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a11[0], matrix_mul_cu:control_unit|r_addr_a11[1], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a11[2], matrix_mul_cu:control_unit|r_addr_a11[3], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a11[4], matrix_mul_cu:control_unit|r_addr_a11[5], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a11[6], matrix_mul_cu:control_unit|r_addr_a11[7], ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_addr_a11[8]                                            ;
+; matrix_mul_cu:control_unit|r_state.STATE_WRITEBACK ; Stuck at GND              ; matrix_mul_cu:control_unit|r_state.STATE_INIT,                                      ;
+;                                                    ; due to stuck port data_in ; matrix_mul_cu:control_unit|r_state.STATE_IDLE,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_delay[0], matrix_mul_cu:control_unit|r_delay[1],       ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_delay[2],                                              ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_BEGINMAC,                                  ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_WAIT,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RB22,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RB21,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RB12,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RB11,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RA22,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RA21,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_RA12                                       ;
+; matrix_mul_cu:control_unit|r_limit_k[7]            ; Stuck at GND              ; matrix_mul_cu:control_unit|r_counter_k[0],                                          ;
+;                                                    ; due to stuck port data_in ; matrix_mul_cu:control_unit|r_counter_j[5],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_counter_j[6],                                          ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_start_b22[4]                                           ;
+; matrix_mul_cu:control_unit|r_state~18              ; Lost Fanouts              ; matrix_mul_cu:control_unit|r_delay[3],                                              ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_WAIT2,                                     ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_ACCUMULATE                                 ;
+; matrix_mul_cu:control_unit|r_state~19              ; Lost Fanouts              ; matrix_mul_cu:control_unit|r_state.STATE_RA11,                                      ;
+;                                                    ;                           ; matrix_mul_cu:control_unit|r_state.STATE_CLIMIT                                     ;
++----------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 0     ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 0     ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 0     ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+; 5:1                ; 5 bits    ; 15 LEs        ; 5 LEs                ; 10 LEs                 ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_b22[8] ;
+; 5:1                ; 12 bits   ; 36 LEs        ; 24 LEs               ; 12 LEs                 ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_b22[5] ;
+; 5:1                ; 5 bits    ; 15 LEs        ; 10 LEs               ; 5 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_b11[6] ;
+; 5:1                ; 15 bits   ; 45 LEs        ; 30 LEs               ; 15 LEs                 ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_a21[1] ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_a22[2] ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_a11[1] ;
+; 5:1                ; 12 bits   ; 36 LEs        ; 24 LEs               ; 12 LEs                 ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_b11[0] ;
+; 4:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_delay[2]    ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_delay[0]    ;
+; 11:1               ; 9 bits    ; 63 LEs        ; 54 LEs               ; 9 LEs                  ; Yes        ; |matrix_multiplier|matrix_mul_cu:control_unit|r_ram_addr[5] ;
+; 3:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; No         ; |matrix_multiplier|matrix_mul_cu:control_unit|r_counter_j   ;
+; 3:1                ; 15 bits   ; 30 LEs        ; 30 LEs               ; 0 LEs                  ; No         ; |matrix_multiplier|matrix_mul_cu:control_unit|r_addr_a11    ;
+; 7:1                ; 2 bits    ; 8 LEs         ; 6 LEs                ; 2 LEs                  ; No         ; |matrix_multiplier|matrix_mul_cu:control_unit|r_state       ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Top-level Entity: |matrix_multiplier ;
++----------------+-------+----------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                     ;
++----------------+-------+----------------------------------------------------------+
+; data_w         ; 32    ; Signed Integer                                           ;
++----------------+-------+----------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: matrix_mul_cu:control_unit ;
++----------------+-------+------------------------------------------------+
+; Parameter Name ; Value ; Type                                           ;
++----------------+-------+------------------------------------------------+
+; data_w         ; 32    ; Signed Integer                                 ;
+; ram_d          ; 512   ; Signed Integer                                 ;
+; ram_add_w      ; 9     ; Signed Integer                                 ;
+; d_w_q          ; 8     ; Signed Integer                                 ;
++----------------+-------+------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------+
+; Parameter Settings for User Entity Instance: ram:memory ;
++----------------+-------+--------------------------------+
+; Parameter Name ; Value ; Type                           ;
++----------------+-------+--------------------------------+
+; width          ; 32    ; Signed Integer                 ;
+; depth          ; 512   ; Signed Integer                 ;
+; dlog           ; 9     ; Signed Integer                 ;
++----------------+-------+--------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++--------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: matrix_mul_cu:control_unit|lpm_mult:Mult0 ;
++------------------------------------------------+----------+--------------------------------+
+; Parameter Name                                 ; Value    ; Type                           ;
++------------------------------------------------+----------+--------------------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; AUTO_CARRY                     ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; IGNORE_CARRY                   ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE                   ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; IGNORE_CASCADE                 ;
+; LPM_WIDTHA                                     ; 3        ; Untyped                        ;
+; LPM_WIDTHB                                     ; 3        ; Untyped                        ;
+; LPM_WIDTHP                                     ; 6        ; Untyped                        ;
+; LPM_WIDTHR                                     ; 6        ; Untyped                        ;
+; LPM_WIDTHS                                     ; 1        ; Untyped                        ;
+; LPM_REPRESENTATION                             ; UNSIGNED ; Untyped                        ;
+; LPM_PIPELINE                                   ; 0        ; Untyped                        ;
+; LATENCY                                        ; 0        ; Untyped                        ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped                        ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped                        ;
+; USE_EAB                                        ; OFF      ; Untyped                        ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped                        ;
+; DEVICE_FAMILY                                  ; MAX V    ; Untyped                        ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped                        ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K            ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; AUTO     ; Untyped                        ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped                        ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped                        ;
+; CBXI_PARAMETER                                 ; NOTHING  ; Untyped                        ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped                        ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped                        ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped                        ;
++------------------------------------------------+----------+--------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------+
+; lpm_mult Parameter Settings by Entity Instance                                    ;
++---------------------------------------+-------------------------------------------+
+; Name                                  ; Value                                     ;
++---------------------------------------+-------------------------------------------+
+; Number of entity instances            ; 1                                         ;
+; Entity Instance                       ; matrix_mul_cu:control_unit|lpm_mult:Mult0 ;
+;     -- LPM_WIDTHA                     ; 3                                         ;
+;     -- LPM_WIDTHB                     ; 3                                         ;
+;     -- LPM_WIDTHP                     ; 6                                         ;
+;     -- LPM_REPRESENTATION             ; UNSIGNED                                  ;
+;     -- INPUT_A_IS_CONSTANT            ; NO                                        ;
+;     -- INPUT_B_IS_CONSTANT            ; NO                                        ;
+;     -- USE_EAB                        ; OFF                                       ;
+;     -- DEDICATED_MULTIPLIER_CIRCUITRY ; AUTO                                      ;
+;     -- INPUT_A_FIXED_VALUE            ; Bx                                        ;
+;     -- INPUT_B_FIXED_VALUE            ; Bx                                        ;
++---------------------------------------+-------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "ram:memory"                                                                                                                                 ;
++------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; Port ; Type  ; Severity ; Details                                                                                                                                      ;
++------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; data ; Input ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
++------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "matrix_mul_cu:control_unit"                                                                                                                                ;
++--------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; Port               ; Type   ; Severity ; Details                                                                                                                                      ;
++--------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; c_11               ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; c_12               ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; c_21               ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; c_22               ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; done_mac           ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; start_mac          ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; a_11               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; a_12               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; a_21               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; a_22               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; b_11               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; b_12               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; b_21               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; b_22               ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; block_mac_complete ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; ram_w_data         ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
++--------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+    Info: Processing started: Wed Jul 07 14:02:25 2021
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off matrix_multiplier -c matrix_multiplier
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file /users/arman/desktop/dsd_project/dsdproject_992/project/multiplier_top_level/matrix_mul_cu.v
+    Info (12023): Found entity 1: matrix_mul_cu File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file matrix_multiplier.v
+    Info (12023): Found entity 1: matrix_multiplier File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 1
+Warning (10463): Verilog HDL Declaration warning at ram.v(7): "do" is SystemVerilog-2005 keyword File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/ram.v Line: 7
+Info (12021): Found 1 design units, including 1 entities, in source file ram.v
+    Info (12023): Found entity 1: ram File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/ram.v Line: 1
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(96): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 96
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(97): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 97
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(98): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 98
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(99): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 99
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(100): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 100
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(101): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 101
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(102): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 102
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(103): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 103
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(104): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 104
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(105): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 105
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(106): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 106
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(107): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 107
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(108): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 108
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(109): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 109
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(110): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 110
+Warning (10222): Verilog HDL Parameter Declaration warning at matrix_mul_cu.v(112): Parameter Declaration in module "matrix_mul_cu" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 112
+Info (12127): Elaborating entity "matrix_multiplier" for the top level hierarchy
+Info (12128): Elaborating entity "matrix_mul_cu" for hierarchy "matrix_mul_cu:control_unit" File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 17
+Warning (10858): Verilog HDL warning at matrix_mul_cu.v(66): object r_ram_w_data used but never assigned File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 66
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(75): truncated value with size 8 to match size of target (1) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 75
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(76): truncated value with size 8 to match size of target (1) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 76
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(167): truncated value with size 32 to match size of target (9) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 167
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(168): truncated value with size 32 to match size of target (9) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 168
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(169): truncated value with size 32 to match size of target (9) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 169
+Warning (10230): Verilog HDL assignment warning at matrix_mul_cu.v(170): truncated value with size 32 to match size of target (9) File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 170
+Warning (10030): Net "r_ram_w_data" at matrix_mul_cu.v(66) has no driver or initial value, using a default initial value '0' File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 66
+Info (12128): Elaborating entity "ram" for hierarchy "ram:memory" File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 23
+Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/arman/Desktop/dsd_project/multiplier_top_level/db/matrix_multiplier.ram0_ram_1d0cf.hdl.mif" contains "don't care" values -- overwriting them with 0s
+Info (278001): Inferred 1 megafunctions from design logic
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "matrix_mul_cu:control_unit|Mult0" File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 176
+Info (12130): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 176
+Info (12133): Instantiated megafunction "matrix_mul_cu:control_unit|lpm_mult:Mult0" with the following parameter: File: C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v Line: 176
+    Info (12134): Parameter "LPM_WIDTHA" = "3"
+    Info (12134): Parameter "LPM_WIDTHB" = "3"
+    Info (12134): Parameter "LPM_WIDTHP" = "6"
+    Info (12134): Parameter "LPM_WIDTHR" = "6"
+    Info (12134): Parameter "LPM_WIDTHS" = "1"
+    Info (12134): Parameter "LPM_REPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "INPUT_A_IS_CONSTANT" = "NO"
+    Info (12134): Parameter "INPUT_B_IS_CONSTANT" = "NO"
+    Info (12134): Parameter "MAXIMIZE_SPEED" = "5"
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_mult.tdf Line: 324
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 283
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mpar_add.tdf Line: 78
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]|addcore:adder", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf Line: 251
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]|addcore:adder|a_csnbuffer:oflow_node", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.tdf Line: 86
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]|addcore:adder|a_csnbuffer:result_node", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.tdf Line: 112
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]|altshift:result_ext_latency_ffs", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf Line: 269
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|lpm_add_sub:adder[0]|altshift:carry_ext_latency_ffs", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf Line: 271
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mpar_add.tdf Line: 138
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add|lpm_add_sub:adder[0]", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/mpar_add.tdf Line: 78
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add|lpm_add_sub:adder[0]|addcore:adder", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf Line: 251
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add|lpm_add_sub:adder[0]|addcore:adder|a_csnbuffer:oflow_node", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.tdf Line: 86
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add|lpm_add_sub:adder[0]|addcore:adder|a_csnbuffer:result_node", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/addcore.tdf Line: 112
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|mpar_add:padder|mpar_add:sub_par_add|lpm_add_sub:adder[0]|altshift:result_ext_latency_ffs", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_add_sub.tdf Line: 269
+Info (12131): Elaborated megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0|altshift:external_latency_ffs", which is child of megafunction instantiation "matrix_mul_cu:control_unit|lpm_mult:Mult0" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/lpm_mult.tdf Line: 352
+Warning (12241): 2 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Warning (14284): Synthesized away the following node(s):
+    Warning (14285): Synthesized away the following LCELL buffer node(s):
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[0][0]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[0][1]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[1][0]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[2][0]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[2][1]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[2][2]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[0][2]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[1][1]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+        Warning (14320): Synthesized away node "matrix_mul_cu:control_unit|lpm_mult:Mult0|multcore:mult_core|decoder_node[1][2]" File: q:/intelfpga_lite/20.1/quartus/libraries/megafunctions/multcore.tdf Line: 252
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "done" is stuck at GND File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 3
+    Warning (13410): Pin "err" is stuck at GND File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 3
+Info (17049): 124 registers lost all their fanouts during netlist optimizations.
+Warning (21074): Design contains 3 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "clk" File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 2
+    Warning (15610): No output dependent on input pin "rst" File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 2
+    Warning (15610): No output dependent on input pin "start" File: C:/Users/arman/Desktop/dsd_project/multiplier_top_level/matrix_multiplier.v Line: 2
+Info (21057): Implemented 5 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 3 input pins
+    Info (21059): Implemented 2 output pins
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 46 warnings
+    Info: Peak virtual memory: 4723 megabytes
+    Info: Processing ended: Wed Jul 07 14:02:35 2021
+    Info: Elapsed time: 00:00:10
+    Info: Total CPU time (on all processors): 00:00:16
+
+

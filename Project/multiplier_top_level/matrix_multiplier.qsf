@@ -39,9 +39,12 @@
 
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE auto
-set_global_assignment -name TOP_LEVEL_ENTITY matrix_mul_cu
+set_global_assignment -name TOP_LEVEL_ENTITY matrix_multiplier
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:38:48  JULY 03, 2021"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
-set_global_assignment -name VERILOG_FILE matrix_mul_cu.v
+set_global_assignment -name VERILOG_FILE ../DSDProject_992/Project/multiplier_top_level/matrix_mul_cu.v
+set_global_assignment -name VERILOG_FILE matrix_multiplier.v
+set_global_assignment -name VERILOG_FILE ram.v
+set_global_assignment -name VERILOG_FILE matrix_multiplier_tb.v

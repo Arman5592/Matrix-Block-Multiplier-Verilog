@@ -1,0 +1,19 @@
+
+State Machine - |matrix_multiplier|matrix_mul_cu:control_unit|r_state
+Name r_state.STATE_WRITEBACK r_state.STATE_WAIT2 r_state.STATE_ACCUMULATE r_state.STATE_WAIT r_state.STATE_BEGINMAC r_state.STATE_RB22 r_state.STATE_RB21 r_state.STATE_RB12 r_state.STATE_RB11 r_state.STATE_RA22 r_state.STATE_RA21 r_state.STATE_RA12 r_state.STATE_RA11 r_state.STATE_INIT r_state.STATE_IDLE r_state.STATE_CLIMIT 
+r_state.STATE_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+r_state.STATE_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 
+r_state.STATE_RA11 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 
+r_state.STATE_RA12 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 
+r_state.STATE_RA21 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 
+r_state.STATE_RA22 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 
+r_state.STATE_RB11 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 
+r_state.STATE_RB12 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 
+r_state.STATE_RB21 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 
+r_state.STATE_RB22 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_BEGINMAC 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_WAIT 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_ACCUMULATE 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_WAIT2 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_WRITEBACK 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+r_state.STATE_CLIMIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
