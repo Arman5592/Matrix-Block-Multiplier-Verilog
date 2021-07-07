@@ -5,12 +5,18 @@ module matrix_mul_cu     #(parameter data_w = 32,
 									
 								  (input wire clk,rst,
 								   input wire [data_w-1:0] c_11,c_12,c_21,c_22,
+																   acc_11,acc_12,acc_21,acc_22,
 									input wire done_mac,
 									input wire [data_w-1:0] ram_r_data,
 									input wire start,
+									input wire done_acc,
+									
 									output wire start_mac,
+									output wire reset_acc,
+									output wire start_acc,
 									output wire [data_w-1:0] a_11,a_12,a_21,a_22,
 								                            b_11,b_12,b_21,b_22,
+									output wire [data_w-1:0] res_11,res_12,res_21,res_22;
 									output wire ram_we,
 									output wire done,err,
 									output wire block_mac_complete,
@@ -55,10 +61,7 @@ reg [d_w_q-1:0] r_limit_i;
 reg [d_w_q-1:0] r_limit_j;
 reg [d_w_q-1:0] r_limit_k;
 
-reg [data_w-1:0] r_accumulator_11;
-reg [data_w-1:0] r_accumulator_12;
-reg [data_w-1:0] r_accumulator_21;
-reg [data_w-1:0] r_accumulator_22;
+reg r_writeback_flag = 1'b0;
 
 
 // i neshon mide row e chandom az matrix chapi hastim
@@ -66,21 +69,23 @@ reg [data_w-1:0] r_accumulator_22;
 // k counter e sevom hast (col e chap = row e rast)
 
 reg       r_done;
+reg		 r_start_acc;
+reg		 r_reset_acc;
 reg 		 r_err;
 reg       r_ram_we;
 reg [data_w-1:0] r_ram_w_data;
 reg [ram_add_w-1:0] r_ram_addr;
 reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_b11,r_b12,r_b21,r_b22;
+					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
 wire w_2N2;
 wire w_2N1;
 
-assign w_2N2 = r_N2 << 1'b1;
-assign w_2N1 = r_N1 << 1'b1;
 
-
+assign start_acc = r_start_acc;
+assign reset_acc = r_reset_acc;
 assign done = r_done;
 assign err = r_err;
 assign ram_we = r_ram_we;
@@ -97,6 +102,11 @@ assign b_11 = r_b11;
 assign b_12 = r_b12;
 assign b_21 = r_b21;
 assign b_22 = r_b22;
+assign res_11 = r_res11;
+assign res_12 = r_res12;
+assign res_21 = r_res21;
+assign res_22 = r_res22;
+
 
 parameter STATE_IDLE 		 = 5'h0;
 parameter STATE_INIT 		 = 5'h1;
@@ -117,8 +127,21 @@ parameter STATE_WRITEBACK12 = 5'hF;
 parameter STATE_WRITEBACK21 = 5'h10;
 parameter STATE_WRITEBACK22 = 5'h11;
 
+parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages vvv
+parameter STATE_RA12_P		 = 5'h15;
+parameter STATE_RA21_P		 = 5'h16;
+parameter STATE_RA22_P		 = 5'h17;
+parameter STATE_RB11_P		 = 5'h18;
+parameter STATE_RB12_P		 = 5'h19;
+parameter STATE_RB21_P		 = 5'h1A;
+parameter STATE_RB22_P		 = 5'h1B;
 
-parameter STATE_CLIMIT	    = 5'h1A;
+
+parameter STATE_CLIMIT	    = 5'h1C;
+
+
+parameter DELAY_MAC			 = 5'd23;
+parameter DELAY_ACC			 = 5'd6;
 
 
 always @ (posedge clk)
@@ -212,6 +235,8 @@ begin
 					r_a11 <= ram_r_data;
 					r_state <= STATE_RA21;
 					r_ram_addr <= r_addr_a21;
+					
+					r_start_acc <= 1'b0;
 				end
 				
 				
@@ -301,7 +326,7 @@ begin
 					
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
 					r_state <= STATE_WAIT;
-					r_delay <= 5'd23;
+					r_delay <= DELAY_MAC;
 					
 					r_counter_k <= r_counter_k + 1'b1;
 					
@@ -364,6 +389,13 @@ begin
 						r_addr_b22 <= r_addr_b22 + 2'b10;
 					end
 					
+					
+					if(r_writeback_flag) begin
+						r_reset_acc <= 1'b1;
+					end
+					
+					
+					
 				end
 				
 				//inja mishe eyne adam omad ye seri load e dge anjam dad.
@@ -371,6 +403,13 @@ begin
 				begin
 					if((|r_delay)==1'b0) begin
 						r_state <= STATE_ACCUMULATE;
+						r_reset_acc <= 1'b0;
+						
+						r_res11 <= c_11;
+						r_res12 <= c_12;
+						r_res21 <= c_21;
+						r_res22 <= c_22;
+						
 					end
 					else if(r_delay == 5'b00001) begin
 						r_start_mac <= 1'b0;
@@ -386,49 +425,47 @@ begin
 				
 				STATE_ACCUMULATE:
 				begin
-					//inja bayad be adder, adad bedim, ke baramon accumulate kone (bordar ro)
 					
-					r_delay <= 5'd6;
-					r_state <= STATE_WAIT2;
-				end
-				
-				STATE_WAIT2:
-				begin
-					if((|r_delay)==1'b0) begin
-						//inja yeseri if darim, age lazem bod bere state e writeback, age na bargarde sare khone aval
-						if(r_counter_k == r_limit_k) 
-							r_state <= STATE_WRITEBACK11;
-						else begin
-							r_state <= STATE_RA11;
-							r_ram_addr <= r_addr_a11;
-						end
-						
+					
+					if(r_counter_k == r_limit_k) begin
+						r_writeback_flag = 1'b1;
+					end
+					
+					if(r_writeback_flag) begin
+						r_writeback_flag = 1'b0;
+						r_state <= STATE_WRITEBACK11;
 					end
 					else begin
-						r_delay <= r_delay - 1'b1;
-						r_state <= STATE_WAIT2;
+						r_ram_addr <= r_addr_a11;
+						r_state <= STATE_RA11;
 					end
+						
+					
+						
+					r_start_acc <= 1'b1;
+					
 				end
+				
 				
 				STATE_WRITEBACK11:
 				begin
-					r_state <= STATE_RA11;
-					r_ram_addr <= r_addr_a11;
+					r_state <= STATE_WRITEBACK12;
 				end
 				
 				STATE_WRITEBACK12:
 				begin
-					
+					r_state <= STATE_WRITEBACK21;
 				end
 				
 				STATE_WRITEBACK21:
 				begin
-					
+					r_state <= STATE_WRITEBACK22;
 				end
 				
 				STATE_WRITEBACK22:
 				begin
-					
+					r_ram_addr <= r_addr_a11;
+					r_state <= STATE_RA11;
 				end
 				
 				STATE_CLIMIT:
@@ -440,7 +477,29 @@ begin
 				
 				default:
 				begin
-					r_state <= STATE_IDLE;
+					r_state <= STATE_IDLE;//'self-starting' kire khar
+				end
+				
+				//pipeline fetching stages:
+				
+				STATE_RA11_P:
+				begin
+				
+				end
+				
+				STATE_RA12_P:
+				begin
+				
+				end
+				
+				STATE_RA21_P:
+				begin
+				
+				end
+				
+				STATE_RA22_P:
+				begin
+				
 				end
 			
 		endcase

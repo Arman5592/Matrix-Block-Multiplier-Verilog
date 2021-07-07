@@ -55,6 +55,20 @@ base_matrix_multiplier base(.clk(clk),
 									 .start(start_mac),
 									 .done(done_mac)
 									 );
+									 
+accumulator		  acc_matrix(.start(),
+									 .reset(),
+									 .clk(),
+									 .done(),
+									 .i_a11(),
+									 .i_a12(),
+									 .i_a21(),
+									 .i_a22(),
+									 .o_a11(),
+									 .o_a12(),
+									 .o_a21(),
+									 .o_a22()
+									 );
 
 endmodule
 
