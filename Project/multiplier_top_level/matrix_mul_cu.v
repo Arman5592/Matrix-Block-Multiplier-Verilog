@@ -186,6 +186,7 @@ begin
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 
 					r_state <= STATE_RA11;
+					r_ram_addr <= 9'd2;
 				end
 				
 				
@@ -199,7 +200,7 @@ begin
 					else if(r_limit_i == r_counter_i)
 						r_state <= STATE_CLIMIT;
 					else 	begin
-						r_ram_addr <= r_addr_a11;
+						r_ram_addr <= r_addr_a12;
 						r_state <= STATE_RA12;
 					end
 				end
@@ -210,7 +211,7 @@ begin
 				begin
 					r_a11 <= ram_r_data;
 					r_state <= STATE_RA21;
-					r_ram_addr <= r_addr_a12;
+					r_ram_addr <= r_addr_a21;
 				end
 				
 				
@@ -224,7 +225,7 @@ begin
 						r_a12 <= ram_r_data;
 						
 						r_state <= STATE_RA22;
-						r_ram_addr <= r_addr_a21;
+						r_ram_addr <= r_addr_a22;
 				end
 				
 				
@@ -238,7 +239,7 @@ begin
 						r_a21 <= ram_r_data;
 					
 						r_state <= STATE_RB11;
-						r_ram_addr <= r_addr_a22;
+						r_ram_addr <= r_addr_b11;
 				end
 				
 				
@@ -251,7 +252,7 @@ begin
 					else
 						r_a22 <= ram_r_data;
 						
-					r_ram_addr <= r_addr_b11;
+					r_ram_addr <= r_addr_b12;
 					r_state <= STATE_RB12;
 				end
 				
@@ -259,7 +260,7 @@ begin
 				begin
 					r_b11 <= ram_r_data;
 					r_state <= STATE_RB21;
-					r_ram_addr <= r_addr_b12;	
+					r_ram_addr <= r_addr_b21;	
 				end
 				
 				
@@ -272,7 +273,7 @@ begin
 						r_b12 <= ram_r_data;
 						
 						r_state <= STATE_RB22;
-						r_ram_addr <= r_addr_b21;
+						r_ram_addr <= r_addr_b22;
 					
 				end
 				
@@ -371,6 +372,11 @@ begin
 					if((|r_delay)==1'b0) begin
 						r_state <= STATE_ACCUMULATE;
 					end
+					else if(r_delay == 5'b00001) begin
+						r_start_mac <= 1'b0;
+						r_delay <= r_delay - 1'b1;
+						r_state <= STATE_WAIT;
+					end
 					else begin
 						r_delay <= r_delay - 1'b1;
 						r_state <= STATE_WAIT;
@@ -392,8 +398,10 @@ begin
 						//inja yeseri if darim, age lazem bod bere state e writeback, age na bargarde sare khone aval
 						if(r_counter_k == r_limit_k) 
 							r_state <= STATE_WRITEBACK11;
-						else
+						else begin
 							r_state <= STATE_RA11;
+							r_ram_addr <= r_addr_a11;
+						end
 						
 					end
 					else begin
@@ -405,6 +413,7 @@ begin
 				STATE_WRITEBACK11:
 				begin
 					r_state <= STATE_RA11;
+					r_ram_addr <= r_addr_a11;
 				end
 				
 				STATE_WRITEBACK12:

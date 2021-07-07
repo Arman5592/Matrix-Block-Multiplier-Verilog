@@ -18,8 +18,19 @@ matrix_mul_cu 		control_unit(.clk(clk),
 										 .err(err),
 										 .ram_addr(ram_addr),
 										 .done_mac(done_mac),
-										 .start_mac(start_mac)
-										 
+										 .start_mac(start_mac),
+										 .a_11(a11),
+										 .a_12(a12),
+										 .a_21(a21),
+										 .a_22(a22),
+										 .b_11(b11),
+										 .b_12(b12),
+										 .b_21(b21),
+										 .b_22(b22),
+										 .c_11(c11),
+										 .c_12(c12),
+										 .c_21(c21),
+										 .c_22(c22)
 										 );
 									 
 ram			  		memory	(.clk(clk),

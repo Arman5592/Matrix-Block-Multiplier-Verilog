@@ -20,7 +20,8 @@ initial begin
 	start = 'b0;
 	#30;
 	start = 'b1;
-	#1000;
+	#100;
+	start = 1'b0;
 end
 
 endmodule
