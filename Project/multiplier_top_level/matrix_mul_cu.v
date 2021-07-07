@@ -46,6 +46,11 @@ reg [ram_add_w-1:0] r_addr_c12;
 reg [ram_add_w-1:0] r_addr_c21;
 reg [ram_add_w-1:0] r_addr_c22;
 
+reg [ram_add_w-1:0] r_start_b11;
+reg [ram_add_w-1:0] r_start_b12;
+reg [ram_add_w-1:0] r_start_b21;
+reg [ram_add_w-1:0] r_start_b22;
+
 reg [d_w_q-1:0] r_limit_i;
 reg [d_w_q-1:0] r_limit_j;
 reg [d_w_q-1:0] r_limit_k;
@@ -63,6 +68,13 @@ reg [ram_add_w-1:0] r_ram_addr;
 reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_b11,r_b12,r_b21,r_b22;
 reg		 r_start_mac;
+
+wire w_2N2;
+wire w_2N1;
+
+assign w_2N2 = r_N2 << 1'b1;
+assign w_2N1 = r_N1 << 1'b1;
+
 
 assign done = r_done;
 assign err = r_err;
@@ -97,7 +109,7 @@ parameter STATE_ACCUMULATE  = 5'hC;
 parameter STATE_WAIT2		 = 5'hD;
 parameter STATE_WRITEBACK   = 5'hE;
 
-parameter STATE_CLIMIT	    = 5'h14;
+parameter STATE_CLIMIT	    = 5'h1A;
 
 
 always @ (posedge clk)
@@ -143,14 +155,26 @@ begin
 					r_addr_a12 <= 9'd3;
 					r_addr_a21 <= 9'd2 + ram_r_data[d_w_q*4-1:d_w_q*3];
 					r_addr_a22 <= 9'd3 + ram_r_data[d_w_q*4-1:d_w_q*3];
+					
+					
 					r_addr_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_addr_b12 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_addr_b21 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
+					r_addr_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
+					r_addr_b12 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 					r_addr_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 										
 					r_addr_c11 <= ram_d;
+					r_addr_c12 <= ram_d - 1'b1;
+					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0];
+					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - 1'b1;
+					
+					r_start_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
+					r_start_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
+					r_start_b12 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
+										    + ram_r_data[d_w_q*2-1:d_w_q];
+					r_start_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
+										    + ram_r_data[d_w_q*2-1:d_w_q];
 
 					r_state <= STATE_RA11;
 				end
@@ -278,13 +302,54 @@ begin
 						if(r_counter_j == r_limit_j) begin
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
+							
+							r_addr_a11 <= r_addr_a21 + r_N1;
+							r_addr_a12 <= r_addr_a22 + r_N1;
+							r_addr_a21 <= r_addr_a21 + w_2N1;
+							r_addr_a22 <= r_addr_a22 + w_2N1;
+							
+							r_addr_b11 <= r_start_b11;
+							r_addr_b12 <= r_start_b12;
+							r_addr_b21 <= r_start_b21;
+							r_addr_b22 <= r_start_b22;
+							
+							r_addr_c11 <= r_addr_c11 - w_2N2;
+							r_addr_c12 <= r_addr_c12 - w_2N2;
+							r_addr_c21 <= r_addr_c21 - w_2N2;
+							r_addr_c22 <= r_addr_c22 - w_2N2;
+							
 						end
 						
 						else begin
 							r_counter_k <= 'b0;
 							r_counter_j <= r_counter_j + 1'b1;
+							
+							r_addr_a11 <= r_addr_a11 - r_N1;
+							r_addr_a12 <= r_addr_a12 - r_N1;
+							r_addr_a21 <= r_addr_a21 - r_N1;
+							r_addr_a22 <= r_addr_a22 - r_N1;
+						
+							r_addr_b11 <= r_addr_b21 + r_N2;
+							r_addr_b12 <= r_addr_b22 + r_N2;
+							r_addr_b21 <= r_addr_b21 + w_2N2;
+							r_addr_b22 <= r_addr_b22 + w_2N2;
+							
+							r_addr_c11 <= r_addr_c11 - 2'b10;
+							r_addr_c12 <= r_addr_c12 - 2'b10;
+							r_addr_c21 <= r_addr_c21 - 2'b10;
+							r_addr_c22 <= r_addr_c22 - 2'b10;
 						end
 						
+					end else begin // inja yani k ziad shode
+						r_addr_a11 <= r_addr_a12 + 1'b1;
+						r_addr_a12 <= r_addr_a12 + 2'b10;
+						r_addr_a21 <= r_addr_a22 + 1'b1;
+						r_addr_a22 <= r_addr_a22 + 2'b10;
+						
+						r_addr_b11 <= r_addr_b12 + 1'b1;
+						r_addr_b12 <= r_addr_b12 + 2'b10;
+						r_addr_b21 <= r_addr_b22 + 1'b1;
+						r_addr_b22 <= r_addr_b22 + 2'b10;
 					end
 					
 				end
@@ -322,6 +387,11 @@ begin
 				end
 				
 				STATE_WRITEBACK:
+				begin
+				
+				end
+				
+				STATE_CLIMIT:
 				begin
 				
 				end
