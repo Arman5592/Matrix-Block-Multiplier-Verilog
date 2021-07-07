@@ -55,6 +55,11 @@ reg [d_w_q-1:0] r_limit_i;
 reg [d_w_q-1:0] r_limit_j;
 reg [d_w_q-1:0] r_limit_k;
 
+reg [data_w-1:0] r_accumulator_11;
+reg [data_w-1:0] r_accumulator_12;
+reg [data_w-1:0] r_accumulator_21;
+reg [data_w-1:0] r_accumulator_22;
+
 
 // i neshon mide row e chandom az matrix chapi hastim
 // j neshon mide col e chandom az matrix rasti hastim
@@ -107,7 +112,11 @@ parameter STATE_BEGINMAC	 = 5'hA;
 parameter STATE_WAIT			 = 5'hB;
 parameter STATE_ACCUMULATE  = 5'hC;
 parameter STATE_WAIT2		 = 5'hD;
-parameter STATE_WRITEBACK   = 5'hE;
+parameter STATE_WRITEBACK11 = 5'hE;
+parameter STATE_WRITEBACK12 = 5'hF;
+parameter STATE_WRITEBACK21 = 5'h10;
+parameter STATE_WRITEBACK22 = 5'h11;
+
 
 parameter STATE_CLIMIT	    = 5'h1A;
 
@@ -297,7 +306,10 @@ begin
 					
 					if(r_counter_k == r_limit_k) begin 
 					
-						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode
+						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode <========== kolle in addressing baraye matrix haye zoje. baraye fard bayad avaz beshe
+																		// mishe farz konim tahe matrix haye fard ye row e 0 hast, va ono hamon aval handle konim, inja faghat col. e fardo handle konim
+																		// FELAN FARZ MIKONIM HAM ROW HAM COLUMN EXTEND MISHE VA ZOJ HAST! BADAN AGE VAGHT SHOD COLUMN ESLAH MISHE
+																		// MISHE BA ZARB piade kard addressing ro, onvaght dge moshkel pish nemiad
 							r_counter_k <= 'b0;
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
@@ -378,7 +390,11 @@ begin
 				begin
 					if((|r_delay)==1'b0) begin
 						//inja yeseri if darim, age lazem bod bere state e writeback, age na bargarde sare khone aval
-						r_state <= STATE_RA11;
+						if(r_counter_k == r_limit_k) 
+							r_state <= STATE_WRITEBACK11;
+						else
+							r_state <= STATE_RA11;
+						
 					end
 					else begin
 						r_delay <= r_delay - 1'b1;
@@ -386,14 +402,30 @@ begin
 					end
 				end
 				
-				STATE_WRITEBACK:
+				STATE_WRITEBACK11:
 				begin
+					r_state <= STATE_RA11;
+				end
 				
+				STATE_WRITEBACK12:
+				begin
+					
+				end
+				
+				STATE_WRITEBACK21:
+				begin
+					
+				end
+				
+				STATE_WRITEBACK22:
+				begin
+					
 				end
 				
 				STATE_CLIMIT:
 				begin
-				
+					r_done <= 1'b1;
+					r_state <= STATE_IDLE;
 				end
 				
 				
