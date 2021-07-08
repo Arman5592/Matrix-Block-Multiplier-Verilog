@@ -9,7 +9,8 @@ wire [data_w-1:0] a11,a12,a21,a22,
 						b11,b12,b21,b22,
 						c11,c12,c21,c22,
 						r11,r12,r21,r22,
-						o11,o12,o21,o22;
+						o11,o12,o21,o22,
+						ram_w_data;
 						
 wire reset_acc,start_acc,done_acc;
 
@@ -46,13 +47,15 @@ matrix_mul_cu 		control_unit(.clk(clk),
 										 .acc_21(o21),
 										 .res_21(r21),
 										 .acc_22(o22),
-										 .res_22(r22)
+										 .res_22(r22),
+										 .ram_w_data(ram_w_data)
 										 );
 									 
 ram			  		memory	(.clk(clk),
 									 .do(ram_r_data),
 									 .addr(ram_addr),
-									 .we(ram_we)
+									 .we(ram_we),
+									 .data(ram_w_data)
 									 );
 									 
 base_matrix_multiplier base(.clk(clk),

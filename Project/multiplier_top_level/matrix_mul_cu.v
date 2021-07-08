@@ -80,10 +80,9 @@ reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
-wire w_2N2;
-wire w_2N1;
+wire [d_w_q-1:0] w_2N2;
 
-
+assign w_2N2 = r_N2 << 1'b1;
 assign start_acc = r_start_acc;
 assign reset_acc = r_reset_acc;
 assign done = r_done;
@@ -142,7 +141,7 @@ parameter STATE_CLIMIT	    = 5'h1C;
 
 
 parameter DELAY_MAC			 = 5'd23;
-parameter DELAY_ACC			 = 5'd6;
+parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe, ke beshe modulartar kard systemo!
 
 
 always @ (posedge clk)
@@ -197,10 +196,10 @@ begin
 					r_addr_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
 										    + ram_r_data[d_w_q*2-1:d_w_q];
 										
-					r_addr_c11 <= ram_d;
-					r_addr_c12 <= ram_d - 1'b1;
-					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0];
-					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - 1'b1;
+					r_addr_c11 <= ram_d - 1'b1;
+					r_addr_c12 <= ram_d - 2'b10;
+					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0] - 1'b1;
+					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - 2'b10;
 					
 					r_start_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
 					r_start_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
@@ -335,8 +334,7 @@ begin
 					
 					if(r_counter_k == r_limit_k) begin 
 					
-						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode <========== kolle in addressing baraye matrix haye zoje. baraye fard bayad avaz beshe
-																		// mishe farz konim tahe matrix haye fard ye row e 0 hast, va ono hamon aval handle konim, inja faghat col. e fardo handle konim
+						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode
 																		// FELAN FARZ MIKONIM HAM ROW HAM COLUMN EXTEND MISHE VA ZOJ HAST! BADAN AGE VAGHT SHOD COLUMN ESLAH MISHE
 																		// MISHE BA ZARB piade kard addressing ro, onvaght dge moshkel pish nemiad
 							r_counter_k <= 'b0;
@@ -451,9 +449,12 @@ begin
 				begin
 					if((|r_delay)==1'b0) begin
 						r_state <= STATE_WRITEBACK11;
-						
+						r_ram_we <= 'b1;
+						r_ram_addr <= r_addr_c11;
+						r_ram_w_data <= acc_11;
 						//inja bayad address e ram ham dade beshe ya ye hamchin chizi (shayad delay==1 bedim behtar bashe)
 					end
+					
 					else begin
 						r_delay <= r_delay - 1'b1;
 						r_state <= STATE_WAIT2;
@@ -463,16 +464,22 @@ begin
 				
 				STATE_WRITEBACK11:
 				begin
+					r_ram_addr <= r_addr_c12;
+					r_ram_w_data <= acc_12;
 					r_state <= STATE_WRITEBACK12;
 				end
 				
 				STATE_WRITEBACK12:
 				begin
+					r_ram_addr <= r_addr_c21;
+					r_ram_w_data <= acc_21;
 					r_state <= STATE_WRITEBACK21;
 				end
 				
 				STATE_WRITEBACK21:
 				begin
+					r_ram_addr <= r_addr_c22;
+					r_ram_w_data <= acc_22;
 					r_state <= STATE_WRITEBACK22;
 				end
 				
