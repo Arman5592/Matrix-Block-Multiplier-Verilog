@@ -16,7 +16,7 @@ module matrix_mul_cu     #(parameter data_w = 32,
 									output wire start_acc,
 									output wire [data_w-1:0] a_11,a_12,a_21,a_22,
 								                            b_11,b_12,b_21,b_22,
-									output wire [data_w-1:0] res_11,res_12,res_21,res_22;
+									output wire [data_w-1:0] res_11,res_12,res_21,res_22,
 									output wire ram_we,
 									output wire done,err,
 									output wire block_mac_complete,
@@ -76,7 +76,7 @@ reg       r_ram_we;
 reg [data_w-1:0] r_ram_w_data;
 reg [ram_add_w-1:0] r_ram_addr;
 reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
-					  r_b11,r_b12,r_b21,r_b22;
+					  r_b11,r_b12,r_b21,r_b22,
 					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
@@ -126,6 +126,7 @@ parameter STATE_WRITEBACK11 = 5'hE;
 parameter STATE_WRITEBACK12 = 5'hF;
 parameter STATE_WRITEBACK21 = 5'h10;
 parameter STATE_WRITEBACK22 = 5'h11;
+
 
 parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages vvv
 parameter STATE_RA12_P		 = 5'h15;
@@ -411,7 +412,7 @@ begin
 						r_res22 <= c_22;
 						
 					end
-					else if(r_delay == 5'b00001) begin
+					else if(r_delay == 5'b10110) begin
 						r_start_mac <= 1'b0;
 						r_delay <= r_delay - 1'b1;
 						r_state <= STATE_WAIT;
@@ -428,22 +429,35 @@ begin
 					
 					
 					if(r_counter_k == r_limit_k) begin
-						r_writeback_flag = 1'b1;
+						r_writeback_flag <= 1'b1;
 					end
 					
 					if(r_writeback_flag) begin
-						r_writeback_flag = 1'b0;
-						r_state <= STATE_WRITEBACK11;
+						r_writeback_flag <= 1'b0;
+						r_state <= STATE_WAIT2;
+						r_delay <= DELAY_ACC;
 					end
 					else begin
 						r_ram_addr <= r_addr_a11;
-						r_state <= STATE_RA11;
+						r_state <= STATE_RA11;//badan bere stage haye pipeline shode
 					end
 						
 					
 						
 					r_start_acc <= 1'b1;
 					
+				end
+				
+				STATE_WAIT2:
+				begin
+					if((|r_delay)==1'b0) begin
+						r_state <= WRITEBACK11;
+						//inja bayad address e ram ham dade beshe ya ye hamchin chizi (shayad delay==1 bedim behtar bashe)
+					end
+					else begin
+						r_delay <= r_delay - 1'b1;
+						r_state <= STATE_WAIT2;
+					end
 				end
 				
 				

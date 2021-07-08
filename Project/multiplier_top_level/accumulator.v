@@ -18,6 +18,7 @@ reg [1:0] state=s_idle;
 
 reg add_ack=0;
 wire add_ready;
+wire [31:0] result11,result12,result21,result22;
 
 reg [31:0] acc11=0,acc12=0,acc21=0,acc22=0;
 reg [31:0] a11,a12,a21,a22;
@@ -68,7 +69,6 @@ end
 
 
 
-wire [31:0] result11,result12,result21,result22;
 adder adder_acc11(
     .clk(clk),
     .reset(state==s_idle || state==s_add),
