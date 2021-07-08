@@ -36,35 +36,37 @@ always @(posedge clk) begin
         acc21 <= 0;
         acc22 <= 0;
     end
+	 else begin
 
-    case (state)
-        s_idle: begin
-            done <= 0;
-            add_ack <= 0;
-            if (start) begin
-                state <= s_setup;
-                a11 <= i_a11; 
-                a12 <= i_a12; 
-                a21 <= i_a21; 
-                a22 <= i_a22; 
-            end
-        end
-        s_setup: begin
-                state <= s_add;
-                add_ack <= 1;
-        end
-        s_add: begin
-            add_ack <= 0;
-            if (add_ready) begin
-                state <= s_idle;
-                done <= 1;
-                acc11 <= result11;
-                acc12 <= result12;
-                acc21 <= result21;
-                acc22 <= result22;
-            end
-        end
-    endcase     
+		 case (state)
+			  s_idle: begin
+					done <= 0;
+					add_ack <= 0;
+					if (start) begin
+						 state <= s_setup;
+						 a11 <= i_a11; 
+						 a12 <= i_a12; 
+						 a21 <= i_a21; 
+						 a22 <= i_a22; 
+					end
+			  end
+			  s_setup: begin
+						 state <= s_add;
+						 add_ack <= 1;
+			  end
+			  s_add: begin
+					add_ack <= 0;
+					if (add_ready) begin
+						 state <= s_idle;
+						 done <= 1;
+						 acc11 <= result11;
+						 acc12 <= result12;
+						 acc21 <= result21;
+						 acc22 <= result22;
+					end
+			  end
+		 endcase     
+	end
 end
 
 

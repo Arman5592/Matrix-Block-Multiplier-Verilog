@@ -211,12 +211,14 @@ begin
 
 					r_state <= STATE_RA11;
 					r_ram_addr <= 9'd2;
+					r_ram_we <= 'b0;
 				end
 				
 				
 				
 				STATE_RA11:
 				begin
+					r_ram_we <= 'b0;
 					if(r_N1!=r_M2) begin
 						r_err <= 1'b1;	//raise error
 						r_state <= STATE_IDLE;
@@ -244,7 +246,7 @@ begin
 				
 				STATE_RA21:
 				begin
-					
+					r_reset_acc <= 1'b0;
 					if(r_limit_k==r_counter_k && r_M1[0])
 						r_a12 <= 'b0;
 					else 
@@ -391,9 +393,7 @@ begin
 					end
 					
 					
-					if(r_writeback_flag) begin
-						r_reset_acc <= 1'b1;
-					end
+					
 					
 					
 					
@@ -404,7 +404,6 @@ begin
 				begin
 					if((|r_delay)==1'b0) begin
 						r_state <= STATE_ACCUMULATE;
-						r_reset_acc <= 1'b0;
 						
 						r_res11 <= c_11;
 						r_res12 <= c_12;
@@ -451,7 +450,8 @@ begin
 				STATE_WAIT2:
 				begin
 					if((|r_delay)==1'b0) begin
-						r_state <= WRITEBACK11;
+						r_state <= STATE_WRITEBACK11;
+						
 						//inja bayad address e ram ham dade beshe ya ye hamchin chizi (shayad delay==1 bedim behtar bashe)
 					end
 					else begin
@@ -480,6 +480,7 @@ begin
 				begin
 					r_ram_addr <= r_addr_a11;
 					r_state <= STATE_RA11;
+					r_reset_acc <= 1'b1;
 				end
 				
 				STATE_CLIMIT:
