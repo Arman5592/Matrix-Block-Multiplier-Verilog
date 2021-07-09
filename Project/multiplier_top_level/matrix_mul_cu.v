@@ -401,7 +401,8 @@ begin
 				//inja mishe eyne adam omad ye seri load e dge anjam dad.
 				STATE_WAIT:
 				begin
-					if((|r_delay)==1'b0) begin
+					//if((|r_delay)==1'b0) begin
+					if(done_mac) begin
 						r_state <= STATE_ACCUMULATE;
 						
 						r_res11 <= c_11;
@@ -449,7 +450,8 @@ begin
 				
 				STATE_WAIT2:
 				begin
-					if((|r_delay)==1'b0) begin
+					//if((|r_delay)==1'b0) begin
+					if(done_acc) begin
 						r_state <= STATE_WRITEBACK11;
 						r_ram_we <= 'b1;
 						r_ram_addr <= r_addr_c11;
@@ -488,16 +490,15 @@ begin
 				begin
 					r_ram_addr <= r_addr_a11;
 					r_state <= STATE_RA11;
-					r_reset_acc <= 1'b1;
 					r_ram_we <= 'b0;
-					
+					r_reset_acc <= 1'b1;
 					r_update_addr_c <= 2'b00;
 					
 					if(r_update_addr_c == 2'b10) begin
-						r_addr_c11 <= r_addr_c11 - w_2N2;
-						r_addr_c12 <= r_addr_c12 - w_2N2;
-						r_addr_c21 <= r_addr_c21 - w_2N2;
-						r_addr_c22 <= r_addr_c22 - w_2N2;
+						r_addr_c11 <= r_addr_c11 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
+						r_addr_c12 <= r_addr_c12 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
+						r_addr_c21 <= r_addr_c21 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
+						r_addr_c22 <= r_addr_c22 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
 					end else if (r_update_addr_c == 2'b01) begin
 						r_addr_c11 <= r_addr_c11 - 2'b10;
 						r_addr_c12 <= r_addr_c12 - 2'b10;

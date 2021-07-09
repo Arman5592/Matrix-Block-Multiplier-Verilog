@@ -1,4 +1,4 @@
-`timescale 1ps/1ps
+`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -46,7 +46,7 @@ output reg result_ready
     reg    [22:0] m1_80,m2_80;
     reg           s1_80,s2_80,Final_sign_80;
     reg    [3:0]  renorm_shift_80;
-    integer signed   renorm_exp_80;
+    integer   renorm_exp_80;
     //reg           renorm_exp_80;
     reg    [31:0] Result_80;
 
@@ -58,7 +58,7 @@ output reg result_ready
         if (start) begin
             e1_80 = number1_copy[30:23];
             e2_80 = number2_copy[30:23];
-            m1_80 = number1_copy[22:0];
+                m1_80 = number1_copy[22:0];
             m2_80 = number2_copy[22:0];
             s1_80 = number1_copy[31];
             s2_80 = number2_copy[31];
@@ -220,10 +220,6 @@ output reg result_ready
                     end
                     final: begin
                         result_ready <= 1;
-                        if (Number1 == 0)
-                                Result_80=Number2;
-                            if (Number2 == 0)
-                                Result_80=Number1;
                         if (result_ack) begin
                             state <= get_input;
                             result_ready <= 0;

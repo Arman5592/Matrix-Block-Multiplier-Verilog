@@ -35,19 +35,16 @@ module single_multiplier(
   reg       s_input_b_ack;
 
   reg       [3:0] state;
-  parameter get_a         = 4'd0,
-            get_b         = 4'd1,
-            unpack        = 4'd2,
-            special_cases = 4'd3,
-            normalise_a   = 4'd4,
-            normalise_b   = 4'd5,
-            multiply_0    = 4'd6,
-            multiply_1    = 4'd7,
-            normalise_1   = 4'd8,
-            normalise_2   = 4'd9,
-            round         = 4'd10,
-            pack          = 4'd11,
-            put_z         = 4'd12;
+  parameter get_a_b       = 4'd0,
+            unpack        = 4'd1,
+            special_cases = 4'd2,
+            normalise     = 4'd3,
+            multiply      = 4'd4,
+            normalise_1   = 4'd5,
+            normalise_2   = 4'd6,
+            round         = 4'd7,
+            pack          = 4'd8,
+            put_z         = 4'd9;
 
   reg       [31:0] a, b, z;
   reg       [23:0] a_m, b_m, z_m;
@@ -61,18 +58,15 @@ module single_multiplier(
 
     case(state)
 
-      get_a:
+      get_a_b:
       begin
         s_input_a_ack <= 1;
         if (s_input_a_ack && input_a_stb) begin
           a <= input_a;
           s_input_a_ack <= 0;
-          state <= get_b;
+          state <= get_a_b;
         end
-      end
 
-      get_b:
-      begin
         s_input_b_ack <= 1;
         if (s_input_b_ack && input_b_stb) begin
           b <= input_b;
@@ -112,7 +106,7 @@ module single_multiplier(
             z[30:23] <= 255;
             z[22] <= 1;
             z[21:0] <= 0;
-          end
+            end
           state <= put_z;
         //if b is inf return inf
         end else if (b_e == 128) begin
@@ -152,41 +146,31 @@ module single_multiplier(
           end else begin
             b_m[23] <= 1;
           end
-          state <= normalise_a;
+          state <= normalise;
         end
       end
 
-      normalise_a:
+      normalise:
       begin
-        if (a_m[23]) begin
-          state <= normalise_b;
-        end else begin
+        if (!a_m[23]) begin
           a_m <= a_m << 1;
           a_e <= a_e - 1;
-        end
-      end
-
-      normalise_b:
-      begin
-        if (b_m[23]) begin
-          state <= multiply_0;
-        end else begin
+        end 
+        if (!b_m[23]) begin
           b_m <= b_m << 1;
           b_e <= b_e - 1;
+        end 
+        if(a_m[23] && b_m[23])begin
+          state <= multiply;
+          product <= a_m * b_m * 4;
         end
       end
 
-      multiply_0:
+      multiply:
       begin
         z_s <= a_s ^ b_s;
         z_e <= a_e + b_e + 1;
-        product <= a_m * b_m * 4;
-        state <= multiply_1;
-      end
-
-      multiply_1:
-      begin
-        z_m <= product[49:26];
+         z_m <= product[49:26];
         guard <= product[25];
         round_bit <= product[24];
         sticky <= (product[23:0] != 0);
@@ -253,14 +237,14 @@ module single_multiplier(
         s_output_z <= z;
         if (s_output_z_stb && output_z_ack) begin
           s_output_z_stb <= 0;
-          state <= get_a;
+          state <= get_a_b;
         end
       end
 
     endcase
 
     if (rst == 1) begin
-      state <= get_a;
+      state <= get_a_b;
       s_input_a_ack <= 0;
       s_input_b_ack <= 0;
       s_output_z_stb <= 0;
