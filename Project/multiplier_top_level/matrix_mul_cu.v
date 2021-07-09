@@ -63,7 +63,8 @@ reg [d_w_q-1:0] r_limit_k;
 
 reg r_writeback_flag = 1'b0;
 reg r_init_cycle_flag = 1'b0;
-
+reg r_even_width_A;
+reg r_even_height_B;
 
 // i neshon mide row e chandom az matrix chapi hastim
 // j neshon mide col e chandom az matrix rasti hastim
@@ -213,6 +214,9 @@ begin
 					r_ram_addr <= 9'd2;
 					r_ram_we <= 'b0;
 					r_init_cycle_flag <= 1'b1;
+					
+					r_even_width_A <= ~ram_r_data[d_w_q*2];
+					r_even_height_B <= ~ram_r_data[d_w_q];
 				end
 				
 				
@@ -344,10 +348,10 @@ begin
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
 							
-							r_addr_a11 <= r_addr_a22 + 1'b1;
-							r_addr_a12 <= r_addr_a22 + 2'b10;
-							r_addr_a21 <= r_addr_a22 + r_N1 + 1'b1;
-							r_addr_a22 <= r_addr_a22 + r_N1 + 2'b10;
+							r_addr_a11 <= r_addr_a22 + r_even_width_A; //r_even_width_A HOSH
+							r_addr_a12 <= r_addr_a22 + r_even_width_A + 1'b1;
+							r_addr_a21 <= r_addr_a22 + r_N1 + r_even_width_A;
+							r_addr_a22 <= r_addr_a22 + r_N1 + r_even_width_A + 1'b1;
 							
 							r_addr_b11 <= r_start_b11;
 							r_addr_b12 <= r_start_b12;
@@ -368,15 +372,15 @@ begin
 							r_counter_k <= 'b0;
 							r_counter_j <= r_counter_j + 1'b1;
 							
-							r_addr_a11 <= r_addr_a11 - r_N1 + 2'b10;
-							r_addr_a12 <= r_addr_a12 - r_N1 + 2'b10;
-							r_addr_a21 <= r_addr_a21 - r_N1 + 2'b10;
-							r_addr_a22 <= r_addr_a22 - r_N1 + 2'b10;
+							r_addr_a11 <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
+							r_addr_a12 <= r_addr_a12 - r_N1 + r_even_width_A + 1'b1;
+							r_addr_a21 <= r_addr_a21 - r_N1 + r_even_width_A + 1'b1;
+							r_addr_a22 <= r_addr_a22 - r_N1 + r_even_width_A + 1'b1;
 						
-							r_addr_b11 <= r_addr_b22 + 1'b1;
-							r_addr_b12 <= r_addr_b22 + r_N2 + 1'b1;
-							r_addr_b21 <= r_addr_b22 + 2'b10;
-							r_addr_b22 <= r_addr_b22 + r_N2 + 2'b10;
+							r_addr_b11 <= r_addr_b22 + r_even_height_B;
+							r_addr_b12 <= r_addr_b22 + r_N2 + r_even_height_B;
+							r_addr_b21 <= r_addr_b22 + r_even_height_B + 1'b1;
+							r_addr_b22 <= r_addr_b22 + r_N2 + r_even_height_B + 1'b1;
 							
 							//if(!r_init_cycle_flag) begin
 								r_addr_c11 <= r_addr_c11 - 2'b10;

@@ -1,6 +1,6 @@
 module matrix_multiplier #(parameter data_w = 32)
 								  (input wire clk,rst,start,
-								   output wire done,err);
+								   output wire done,err,ram_writing);
 						
 wire [data_w-1:0] ram_r_data;
 wire ram_we,done_mac,start_mac;
@@ -13,6 +13,8 @@ wire [data_w-1:0] a11,a12,a21,a22,
 						ram_w_data;
 						
 wire reset_acc,start_acc,done_acc;
+
+assign ram_writing = ram_we;
 
 
 matrix_mul_cu 		control_unit(.clk(clk),
