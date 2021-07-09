@@ -62,6 +62,7 @@ reg [d_w_q-1:0] r_limit_j;
 reg [d_w_q-1:0] r_limit_k;
 
 reg r_writeback_flag = 1'b0;
+reg r_init_cycle_flag = 1'b0;
 
 
 // i neshon mide row e chandom az matrix chapi hastim
@@ -211,13 +212,14 @@ begin
 					r_state <= STATE_RA11;
 					r_ram_addr <= 9'd2;
 					r_ram_we <= 'b0;
+					r_init_cycle_flag <= 1'b1;
 				end
 				
 				
 				
 				STATE_RA11:
 				begin
-					r_ram_we <= 'b0;
+					
 					if(r_N1!=r_M2) begin
 						r_err <= 1'b1;	//raise error
 						r_state <= STATE_IDLE;
@@ -329,6 +331,7 @@ begin
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
 					r_state <= STATE_WAIT;
 					r_delay <= DELAY_MAC;
+					r_init_cycle_flag <= 1'b0;
 					
 					r_counter_k <= r_counter_k + 1'b1;
 					
@@ -351,10 +354,13 @@ begin
 							r_addr_b21 <= r_start_b21;
 							r_addr_b22 <= r_start_b22;
 							
-							r_addr_c11 <= r_addr_c11 - w_2N2;
-							r_addr_c12 <= r_addr_c12 - w_2N2;
-							r_addr_c21 <= r_addr_c21 - w_2N2;
-							r_addr_c22 <= r_addr_c22 - w_2N2;
+							if(r_counter_i != 'b0) begin
+							//if(!r_init_cycle_flag) begin
+								r_addr_c11 <= r_addr_c11 - w_2N2;
+								r_addr_c12 <= r_addr_c12 - w_2N2;
+								r_addr_c21 <= r_addr_c21 - w_2N2;
+								r_addr_c22 <= r_addr_c22 - w_2N2;
+							end
 							
 						end
 						
@@ -372,10 +378,12 @@ begin
 							r_addr_b21 <= r_addr_b22 + 2'b10;
 							r_addr_b22 <= r_addr_b22 + r_N2 + 2'b10;
 							
-							r_addr_c11 <= r_addr_c11 - 2'b10;
-							r_addr_c12 <= r_addr_c12 - 2'b10;
-							r_addr_c21 <= r_addr_c21 - 2'b10;
-							r_addr_c22 <= r_addr_c22 - 2'b10;
+							//if(!r_init_cycle_flag) begin
+								r_addr_c11 <= r_addr_c11 - 2'b10;
+								r_addr_c12 <= r_addr_c12 - 2'b10;
+								r_addr_c21 <= r_addr_c21 - 2'b10;
+								r_addr_c22 <= r_addr_c22 - 2'b10;
+							//end
 						end
 						
 					end else begin // inja yani k ziad shode
@@ -488,6 +496,7 @@ begin
 					r_ram_addr <= r_addr_a11;
 					r_state <= STATE_RA11;
 					r_reset_acc <= 1'b1;
+					r_ram_we <= 'b0;
 				end
 				
 				STATE_CLIMIT:
