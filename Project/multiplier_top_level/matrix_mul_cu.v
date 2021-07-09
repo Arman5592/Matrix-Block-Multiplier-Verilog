@@ -65,6 +65,7 @@ reg r_writeback_flag = 1'b0;
 reg r_init_cycle_flag = 1'b0;
 reg r_even_width_A;
 reg r_even_height_B;
+reg [1:0] r_update_addr_c = 2'b00;
 
 // i neshon mide row e chandom az matrix chapi hastim
 // j neshon mide col e chandom az matrix rasti hastim
@@ -200,8 +201,8 @@ begin
 										
 					r_addr_c11 <= ram_d - 1'b1;
 					r_addr_c12 <= ram_d - 2'b10;
-					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0] - 1'b1;
-					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - 2'b10;
+					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0] - ram_r_data[0] - 1'b1;
+					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - ram_r_data[0] - 2'b10;
 					
 					r_start_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
 					r_start_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
@@ -252,7 +253,7 @@ begin
 				STATE_RA21:
 				begin
 					r_reset_acc <= 1'b0;
-					if(r_limit_k==r_counter_k && r_M1[0])
+					if(r_limit_k==r_counter_k && r_N1[0])
 						r_a12 <= 'b0;
 					else 
 						r_a12 <= ram_r_data;
@@ -266,7 +267,7 @@ begin
 				STATE_RA22:
 				begin
 					
-					if(r_limit_i==r_counter_i && r_N1[0]) 
+					if(r_limit_i==(r_counter_i+1'b1) && r_M1[0]) 
 						r_a21 <= 'b0;
 					else
 						r_a21 <= ram_r_data;
@@ -280,7 +281,7 @@ begin
 				STATE_RB11:
 				begin
 				
-					if((r_limit_i==r_counter_i && r_N1[0]) || r_limit_k==r_counter_k && r_M1[0])
+					if((r_limit_i==(r_counter_i+1'b1) && r_M1[0]) || r_limit_k==r_counter_k && r_N1[0])
 						r_a22 <= 'b0;
 					else
 						r_a22 <= ram_r_data;
@@ -300,7 +301,7 @@ begin
 				
 				STATE_RB21:
 				begin
-					if(r_limit_j==r_counter_j && r_M2[0])
+					if(r_limit_j==r_counter_j && r_N2[0])
 						r_b12 <= 'b0;
 					else
 						r_b12 <= ram_r_data;
@@ -313,7 +314,7 @@ begin
 				STATE_RB22:
 				begin
 					
-					if(r_limit_k==r_counter_k && r_N2[0])
+					if(r_limit_k==r_counter_k && r_M2[0])
 						r_b21 <= 'b0;
 					else
 						r_b21 <= ram_r_data;
@@ -327,7 +328,7 @@ begin
 				STATE_BEGINMAC:
 				begin
 					
-					if((r_limit_k==r_counter_k && r_N2[0]) || r_limit_j==r_counter_j && r_M2[0])
+					if((r_limit_k==r_counter_k && r_M2[0]) || r_limit_j==r_counter_j && r_N2[0])
 						r_b22 <= 'b0;
 					else
 						r_b22 <= ram_r_data;
@@ -336,10 +337,10 @@ begin
 					r_state <= STATE_WAIT;
 					r_delay <= DELAY_MAC;
 					r_init_cycle_flag <= 1'b0;
-					
+
 					r_counter_k <= r_counter_k + 1'b1;
 					
-					if(r_counter_k == r_limit_k) begin 
+					if(r_counter_k == r_limit_k && (!r_init_cycle_flag)) begin 
 					
 						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode
 																		// FELAN FARZ MIKONIM HAM ROW HAM COLUMN EXTEND MISHE VA ZOJ HAST! BADAN AGE VAGHT SHOD COLUMN ESLAH MISHE
@@ -358,13 +359,16 @@ begin
 							r_addr_b21 <= r_start_b21;
 							r_addr_b22 <= r_start_b22;
 							
-							if(r_counter_i != 'b0) begin
+							//if(r_counter_i != 'b0) begin
 							//if(!r_init_cycle_flag) begin
+								r_update_addr_c <= 2'b10;
+								/*
 								r_addr_c11 <= r_addr_c11 - w_2N2;
 								r_addr_c12 <= r_addr_c12 - w_2N2;
 								r_addr_c21 <= r_addr_c21 - w_2N2;
 								r_addr_c22 <= r_addr_c22 - w_2N2;
-							end
+								*/
+							//end
 							
 						end
 						
@@ -383,14 +387,19 @@ begin
 							r_addr_b22 <= r_addr_b22 + r_N2 + r_even_height_B + 1'b1;
 							
 							//if(!r_init_cycle_flag) begin
+								r_update_addr_c <= 2'b01;	
+								/*
 								r_addr_c11 <= r_addr_c11 - 2'b10;
 								r_addr_c12 <= r_addr_c12 - 2'b10;
 								r_addr_c21 <= r_addr_c21 - 2'b10;
 								r_addr_c22 <= r_addr_c22 - 2'b10;
+								*/
 							//end
 						end
 						
 					end else begin // inja yani k ziad shode
+						r_update_addr_c <= 2'b00;
+						
 						r_addr_a11 <= r_addr_a12 + 1'b1;
 						r_addr_a12 <= r_addr_a12 + 2'b10;
 						r_addr_a21 <= r_addr_a22 + 1'b1;
@@ -401,12 +410,6 @@ begin
 						r_addr_b21 <= r_addr_b21 + 2'b10;
 						r_addr_b22 <= r_addr_b22 + 2'b10;
 					end
-					
-					
-					
-					
-					
-					
 				end
 				
 				//inja mishe eyne adam omad ye seri load e dge anjam dad.
@@ -454,6 +457,7 @@ begin
 					
 						
 					r_start_acc <= 1'b1;
+
 					
 				end
 				
@@ -501,6 +505,20 @@ begin
 					r_state <= STATE_RA11;
 					r_reset_acc <= 1'b1;
 					r_ram_we <= 'b0;
+					
+					r_update_addr_c <= 2'b00;
+					
+					if(r_update_addr_c == 2'b10) begin
+						r_addr_c11 <= r_addr_c11 - w_2N2;
+						r_addr_c12 <= r_addr_c12 - w_2N2;
+						r_addr_c21 <= r_addr_c21 - w_2N2;
+						r_addr_c22 <= r_addr_c22 - w_2N2;
+					end else if (r_update_addr_c == 2'b01) begin
+						r_addr_c11 <= r_addr_c11 - 2'b10;
+						r_addr_c12 <= r_addr_c12 - 2'b10;
+						r_addr_c21 <= r_addr_c21 - 2'b10;
+						r_addr_c22 <= r_addr_c22 - 2'b10;
+					end	
 				end
 				
 				STATE_CLIMIT:
