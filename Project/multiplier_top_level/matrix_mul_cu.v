@@ -129,6 +129,8 @@ parameter STATE_WRITEBACK12 = 5'hF;
 parameter STATE_WRITEBACK21 = 5'h10;
 parameter STATE_WRITEBACK22 = 5'h11;
 
+parameter STATE_INIT2		 = 5'h12;//to increase operational frequency
+parameter STATE_INIT3		 = 5'h13;
 
 parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages vvv
 parameter STATE_RA12_P		 = 5'h15;
@@ -144,8 +146,7 @@ parameter STATE_CLIMIT	    = 5'h1C;
 
 
 parameter DELAY_MAC			 = 5'd23;
-parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe, ke beshe modulartar kard systemo!
-
+parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe
 
 always @ (posedge clk)
 begin
@@ -188,8 +189,8 @@ begin
 					
 					r_addr_a11 <= 9'd2;
 					r_addr_a12 <= 9'd3;
-					r_addr_a21 <= 9'd2 + ram_r_data[d_w_q*4-1:d_w_q*3];
-					r_addr_a22 <= 9'd3 + ram_r_data[d_w_q*4-1:d_w_q*3];
+					r_addr_a21 <= 9'd2 + ram_r_data[d_w_q*3-1:d_w_q*2];
+					r_addr_a22 <= 9'd3 + ram_r_data[d_w_q*3-1:d_w_q*2];
 					
 					
 					r_addr_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
@@ -342,14 +343,13 @@ begin
 					
 					if(r_counter_k == r_limit_k && (!r_init_cycle_flag)) begin 
 					
-						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode
-																		// FELAN FARZ MIKONIM HAM ROW HAM COLUMN EXTEND MISHE VA ZOJ HAST! BADAN AGE VAGHT SHOD COLUMN ESLAH MISHE
-																		// MISHE BA ZARB piade kard addressing ro, onvaght dge moshkel pish nemiad
+						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode 
+						
 							r_counter_k <= 'b0;
 							r_counter_j <= 'b0;
 							r_counter_i <= r_counter_i + 1'b1;
 							
-							r_addr_a11 <= r_addr_a22 + r_even_width_A; //r_even_width_A HOSH
+							r_addr_a11 <= r_addr_a22 + r_even_width_A; 
 							r_addr_a12 <= r_addr_a22 + r_even_width_A + 1'b1;
 							r_addr_a21 <= r_addr_a22 + r_N1 + r_even_width_A;
 							r_addr_a22 <= r_addr_a22 + r_N1 + r_even_width_A + 1'b1;
@@ -359,16 +359,9 @@ begin
 							r_addr_b21 <= r_start_b21;
 							r_addr_b22 <= r_start_b22;
 							
-							//if(r_counter_i != 'b0) begin
-							//if(!r_init_cycle_flag) begin
-								r_update_addr_c <= 2'b10;
-								/*
-								r_addr_c11 <= r_addr_c11 - w_2N2;
-								r_addr_c12 <= r_addr_c12 - w_2N2;
-								r_addr_c21 <= r_addr_c21 - w_2N2;
-								r_addr_c22 <= r_addr_c22 - w_2N2;
-								*/
-							//end
+							
+							r_update_addr_c <= 2'b10;
+								
 							
 						end
 						
@@ -382,19 +375,12 @@ begin
 							r_addr_a22 <= r_addr_a22 - r_N1 + r_even_width_A + 1'b1;
 						
 							r_addr_b11 <= r_addr_b22 + r_even_height_B;
-							r_addr_b12 <= r_addr_b22 + r_N2 + r_even_height_B;
+							r_addr_b12 <= r_addr_b22 + r_M2 + r_even_height_B;
 							r_addr_b21 <= r_addr_b22 + r_even_height_B + 1'b1;
-							r_addr_b22 <= r_addr_b22 + r_N2 + r_even_height_B + 1'b1;
+							r_addr_b22 <= r_addr_b22 + r_M2 + r_even_height_B + 1'b1;
 							
-							//if(!r_init_cycle_flag) begin
-								r_update_addr_c <= 2'b01;	
-								/*
-								r_addr_c11 <= r_addr_c11 - 2'b10;
-								r_addr_c12 <= r_addr_c12 - 2'b10;
-								r_addr_c21 <= r_addr_c21 - 2'b10;
-								r_addr_c22 <= r_addr_c22 - 2'b10;
-								*/
-							//end
+							r_update_addr_c <= 2'b01;	
+								
 						end
 						
 					end else begin // inja yani k ziad shode
@@ -468,7 +454,6 @@ begin
 						r_ram_we <= 'b1;
 						r_ram_addr <= r_addr_c11;
 						r_ram_w_data <= acc_11;
-						//inja bayad address e ram ham dade beshe ya ye hamchin chizi (shayad delay==1 bedim behtar bashe)
 					end
 					
 					else begin
@@ -530,7 +515,7 @@ begin
 				
 				default:
 				begin
-					r_state <= STATE_IDLE;//'self-starting' kire khar
+					r_state <= STATE_IDLE;//'self-starting'
 				end
 				
 				//pipeline fetching stages:
