@@ -39,18 +39,18 @@ reg [d_w_q-1:0] r_counter_i;
 reg [d_w_q-1:0] r_counter_j;
 reg [d_w_q-1:0] r_counter_k;
 
-reg [ram_add_w-1:0] r_addr_a11;
-reg [ram_add_w-1:0] r_addr_a12;
-reg [ram_add_w-1:0] r_addr_a21;
-reg [ram_add_w-1:0] r_addr_a22;
-reg [ram_add_w-1:0] r_addr_b11;
-reg [ram_add_w-1:0] r_addr_b12;
-reg [ram_add_w-1:0] r_addr_b21;
-reg [ram_add_w-1:0] r_addr_b22;
-reg [ram_add_w-1:0] r_addr_c11;
-reg [ram_add_w-1:0] r_addr_c12;
-reg [ram_add_w-1:0] r_addr_c21;
-reg [ram_add_w-1:0] r_addr_c22;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_a11;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_a12;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_a21;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_a22;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_b11;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_b12;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_b21;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_b22;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_c11;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_c12;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_c21;
+(*EQUIVALENT_REGISTER_REMOVAL="NO"*)(*max_fanout=5*)reg [ram_add_w-1:0] r_addr_c22;
 
 reg [ram_add_w-1:0] r_start_b11;
 reg [ram_add_w-1:0] r_start_b12;
@@ -90,9 +90,17 @@ reg [d_w_q-1:0] w_mult_operand2;
 wire [d_w_q+1:0] w_add_sum;
 reg [d_w_q:0] w_add_operand1;
 reg [d_w_q:0] w_add_operand2;
+reg [d_w_q:0] w_add_operand3;
+
+wire [d_w_q+1:0] w_add2_sum;
+reg [d_w_q:0] w_add2_operand1;
+reg [d_w_q:0] w_add2_operand2;
+reg [d_w_q:0] w_add2_operand3;
 
 assign w_mult_product = w_mult_operand1 * w_mult_operand2;
-assign w_add_sum = w_add_operand1 + w_add_operand2;
+assign w_add_sum = w_add_operand1 + w_add_operand2 + w_add_operand3;
+assign w_add2_sum = w_add2_operand1 + w_add2_operand2 + w_add2_operand3;
+
 
 assign start_acc = r_start_acc;
 assign reset_acc = r_reset_acc;
@@ -241,21 +249,32 @@ begin
 					
 					w_add_operand1 <= w_mult_product;
 					w_add_operand2 <= ram_r_data[d_w_q*2-1:d_w_q];
+					w_add_operand3 <= 9'd2;
+					
+					w_add2_operand1 <= w_mult_product;
+					w_add2_operand2 <= ram_r_data[d_w_q*2-1:d_w_q];
+					w_add2_operand3 <= 9'd3;
 				end
 				
 				STATE_INIT4:
 				begin
+					
 					r_state <= STATE_RA11;
 					
-					r_addr_b12 <= 9'd2 + w_add_sum;
-					r_addr_b22 <= 9'd3 + w_add_sum;
-					
-					r_start_b12 <= 9'd2 + w_add_sum;
-					r_start_b22 <= 9'd3 + w_add_sum;
+					//r_addr_b12 <= w_add_sum + 9'd2;
+					//r_addr_b22 <= w_add_sum + 9'd3;
+					r_addr_b12 <= w_add_sum;
+					r_addr_b22 <= w_add2_sum;
+					//r_start_b12 <= w_add_sum + 9'd2;
+					//r_start_b22 <= w_add_sum + 9'd3;	
+					r_start_b12 <= w_add_sum;
+					r_start_b22 <= w_add2_sum;
 					
 					r_ram_addr <= 9'd2;
 					r_ram_we <= 'b0;
+					
 				end
+				
 				
 				STATE_RA11:
 				begin
