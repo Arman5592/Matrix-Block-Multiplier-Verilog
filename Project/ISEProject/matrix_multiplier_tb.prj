@@ -1,0 +1,7 @@
+verilog work "adder.v"
+verilog work "ram.v"
+verilog work "matrix_mul_cu.v"
+verilog work "base_matrix_multiplier.v"
+verilog work "accumulator.v"
+verilog work "matrix_multiplier.v"
+verilog work "matrix_multiplier_tb.v"

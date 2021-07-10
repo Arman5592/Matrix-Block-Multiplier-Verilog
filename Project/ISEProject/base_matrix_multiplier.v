@@ -22,7 +22,8 @@ wire [31:0] mult_a11_b11,mult_a11_b12,mult_a21_b11,mult_a21_b12,
             mult_a12_b21,mult_a12_b22,mult_a22_b21,mult_a22_b22;
 wire a_ack,b_ack,z_stb;
 wire z_stb1,z_stb2,z_stb3,z_stb4,z_stb5,z_stb6,z_stb7,z_stb8;
-reg a_stb,b_stb,z_ack,rst<=1'b1;
+reg a_stb,b_stb,z_ack;
+reg rst = 1'b1;
 
 reg a_stb_adder,b_stb_adder,z_ack_adder;
 
@@ -62,7 +63,7 @@ always @(posedge clk) begin
                 add_reset <= 1;
         end
         s_mult: begin
-            z_ack = 0;
+            z_ack <= 1'b0;
             if(z_stb == 1) begin
                 state <= s_add;
                 a_stb <= 0;

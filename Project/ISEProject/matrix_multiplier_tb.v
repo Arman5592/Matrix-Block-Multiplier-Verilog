@@ -1,0 +1,27 @@
+`timescale 1ps/1ps
+
+module matrix_multiplier_tb ();
+
+
+reg clk,rst,start;
+wire done,error;
+
+matrix_multiplier multiplier(clk,rst,start,done,error);
+
+always begin
+	clk = 'b1;
+	#10;
+	clk = 'b0;
+	#10;
+end
+
+initial begin
+	rst = 'b0;
+	start = 'b0;
+	#30;
+	start = 'b1;
+	#100;
+	start = 1'b0;
+end
+
+endmodule
