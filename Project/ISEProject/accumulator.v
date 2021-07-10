@@ -34,7 +34,7 @@ assign add_ready = & add_readies;
 reg add_reset = 1;
 
 
-reg a_stb,b_stb,z_ack;
+reg stb,z_ack;
 
 always @(posedge clk) begin
     
@@ -60,8 +60,7 @@ always @(posedge clk) begin
 			  end
 			  s_setup: begin
 						 state <= s_add;
-						 a_stb <= 1;
-                         b_stb <= 1;
+						 stb <= 1;
                          z_ack <= 1;
 						 add_reset <= 0;
 			  end
@@ -74,8 +73,7 @@ always @(posedge clk) begin
 					    acc22 <= result22;
 						state <= s_wait; 
 						done <= 1;
-						a_stb <= 0;
-                        b_stb <= 0;
+						stb <= 0;
                         z_ack <= 0;
 					end
 			  end
@@ -102,8 +100,7 @@ adder addder_acc11(
     .input_b(a11),
     .output_z(result11),
     .output_z_stb(add_readies[0]),
-    .input_a_stb(a_stb),
-    .input_b_stb(b_stb),
+    .input_stb(stb),
     .output_z_ack(z_ack)
 );
 adder addder_acc12(
@@ -113,8 +110,7 @@ adder addder_acc12(
     .input_b(a12),
     .output_z(result12),
     .output_z_stb(add_readies[1]),
-    .input_a_stb(a_stb),
-    .input_b_stb(b_stb),
+    .input_stb(stb),
     .output_z_ack(z_ack)
 );
 adder addder_acc21(
@@ -124,8 +120,7 @@ adder addder_acc21(
     .input_b(a21),
     .output_z(result21),
     .output_z_stb(add_readies[2]),
-    .input_a_stb(a_stb),
-    .input_b_stb(b_stb),
+    .input_stb(stb),
     .output_z_ack(z_ack)
 );
 adder addder_acc22(
@@ -135,13 +130,12 @@ adder addder_acc22(
     .input_b(a22),
     .output_z(result22),
     .output_z_stb(add_readies[3]),
-    .input_a_stb(a_stb),
-    .input_b_stb(b_stb),
+    .input_stb(stb),
     .output_z_ack(z_ack)
 );
 
 endmodule
-
+//
 //module test();
 //
 //reg [31:0] a11,a12,a21,a22;
@@ -166,7 +160,7 @@ endmodule
 //);
 //  always #10 clk=~clk;  // 25MHz
 //initial 
-// $monitor ("%0t acc11=%h acc12=%h acc21=%h acc22=%h a11=%h a12=%h a21=%h a22=%h state=%d ready_add=%b done=%b",$time, acc11,acc12,acc21,acc22,a11,a12,a21,a22,acc.state,acc.add_ready,done);
+// $monitor("%0t acc11=%h acc12=%h acc21=%h acc22=%h a11=%h a12=%h a21=%h a22=%h state=%d ready_add=%b done=%b",$time, acc11,acc12,acc21,acc22,a11,a12,a21,a22,acc.state,acc.add_ready,done);
 //
 //initial begin
 //    start = 1;

@@ -79,8 +79,8 @@ module single_multiplier(
       begin
         a_m <= a[22 : 0];
         b_m <= b[22 : 0];
-        a_e <= a[30 : 23] - 127;
-        b_e <= b[30 : 23] - 127;
+        a_e <= a[30 : 23] - 9'd127;
+        b_e <= b[30 : 23] - 9'd127;
         a_s <= a[31];
         b_s <= b[31];
         state <= special_cases;
@@ -144,7 +144,7 @@ module single_multiplier(
           if ($signed(b_e) == -127) begin
             b_e <= -126;
           end else begin
-            b_m[23] <= 1;
+            b_m[23] <= 1'b1;
           end
           state <= normalise;
         end
@@ -153,12 +153,12 @@ module single_multiplier(
       normalise:
       begin
         if (!a_m[23]) begin
-          a_m <= a_m << 1;
-          a_e <= a_e - 1;
+          a_m <= a_m << 1'b1;
+          a_e <= a_e - 1'b1;
         end 
         if (!b_m[23]) begin
-          b_m <= b_m << 1;
-          b_e <= b_e - 1;
+          b_m <= b_m << 1'b1;
+          b_e <= b_e - 1'b1;
         end 
         if(a_m[23] && b_m[23])begin
           state <= multiply;

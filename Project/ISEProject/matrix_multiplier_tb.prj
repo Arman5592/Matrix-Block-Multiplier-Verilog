@@ -1,3 +1,4 @@
+verilog work "single_multiplier.v"
 verilog work "adder.v"
 verilog work "ram.v"
 verilog work "matrix_mul_cu.v"

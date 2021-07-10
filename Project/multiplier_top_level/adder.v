@@ -5,8 +5,7 @@
 module adder(
         input_a,
         input_b,
-        input_a_stb,
-        input_b_stb,
+        input_stb,
         output_z_ack,
         clk,
         rst,
@@ -17,10 +16,9 @@ module adder(
   input     rst;
 
   input     [31:0] input_a;
-  input     input_a_stb;
+  input     input_stb;
 
   input     [31:0] input_b;
-  input     input_b_stb;
 
   output    [31:0] output_z;
   output    output_z_stb;
@@ -32,18 +30,17 @@ module adder(
   reg       s_input_b_ack;
 
   reg       [3:0] state;
-  parameter get_a         = 4'd0,
-            get_b         = 4'd1,
-            unpack        = 4'd2,
-            special_cases = 4'd3,
-            align         = 4'd4,
-            add_0         = 4'd5,
-            add_1         = 4'd6,
-            normalise_1   = 4'd7,
-            normalise_2   = 4'd8,
-            round         = 4'd9,
-            pack          = 4'd10,
-            put_z         = 4'd11;
+  parameter get_ab         = 4'd0,
+            unpack        = 4'd1,
+            special_cases = 4'd2,
+            align         = 4'd3,
+            add_0         = 4'd4,
+            add_1         = 4'd5,
+            normalise_1   = 4'd6,
+            normalise_2   = 4'd7,
+            round         = 4'd8,
+            pack          = 4'd9,
+            put_z         = 4'd10;
 
   reg       [31:0] a, b, z;
   reg       [26:0] a_m, b_m;
@@ -58,32 +55,30 @@ module adder(
 
     case(state)
 
-      get_a:
+      get_ab:
       begin
         s_input_a_ack <= 1;
-        if (s_input_a_ack && input_a_stb) begin
+        if (s_input_a_ack && input_stb) begin
           a <= input_a;
           s_input_a_ack <= 0;
-          state <= get_b;
         end
-      end
 
-      get_b:
-      begin
         s_input_b_ack <= 1;
-        if (s_input_b_ack && input_b_stb) begin
+        if (s_input_b_ack && input_stb) begin
           b <= input_b;
           s_input_b_ack <= 0;
           state <= unpack;
         end
       end
 
+
+
       unpack:
       begin
         a_m <= {a[22 : 0], 3'd0};
         b_m <= {b[22 : 0], 3'd0};
-        a_e <= a[30 : 23] - 127;
-        b_e <= b[30 : 23] - 127;
+        a_e <= a[30 : 23] - 10'd127;
+        b_e <= b[30 : 23] - 10'd127;
         a_s <= a[31];
         b_s <= b[31];
         state <= special_cases;
@@ -265,14 +260,14 @@ module adder(
         s_output_z <= z;
         if (s_output_z_stb && output_z_ack) begin
           s_output_z_stb <= 0;
-          state <= get_a;
+          state <= get_ab;
         end
       end
 
     endcase
 
     if (rst == 1) begin
-      state <= get_a;
+      state <= get_ab;
       s_input_a_ack <= 0;
       s_input_b_ack <= 0;
       s_output_z_stb <= 0;

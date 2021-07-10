@@ -83,9 +83,17 @@ reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
-wire [d_w_q-1:0] w_2N2;
+wire [d_w_q:0] w_mult_product;
+reg [d_w_q-1:0] w_mult_operand1;
+reg [d_w_q-1:0] w_mult_operand2;
 
-assign w_2N2 = r_N2 << 1'b1;
+wire [d_w_q+1:0] w_add_sum;
+reg [d_w_q:0] w_add_operand1;
+reg [d_w_q:0] w_add_operand2;
+
+assign w_mult_product = w_mult_operand1 * w_mult_operand2;
+assign w_add_sum = w_add_operand1 + w_add_operand2;
+
 assign start_acc = r_start_acc;
 assign reset_acc = r_reset_acc;
 assign done = r_done;
@@ -131,6 +139,7 @@ parameter STATE_WRITEBACK22 = 5'h11;
 
 parameter STATE_INIT2		 = 5'h12;//to increase operational frequency
 parameter STATE_INIT3		 = 5'h13;
+parameter STATE_INIT4		 = 5'h1D;
 
 parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages vvv
 parameter STATE_RA12_P		 = 5'h15;
@@ -146,7 +155,7 @@ parameter STATE_CLIMIT	    = 5'h1C;
 
 
 parameter DELAY_MAC			 = 5'd23;
-parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe
+parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe | kollan vojodeshon kheiliam pointi nadare.
 
 always @ (posedge clk)
 begin
@@ -192,36 +201,61 @@ begin
 					r_addr_a21 <= 9'd2 + ram_r_data[d_w_q*3-1:d_w_q*2];
 					r_addr_a22 <= 9'd3 + ram_r_data[d_w_q*3-1:d_w_q*2];
 					
+					w_mult_operand1 <= ram_r_data[d_w_q*4-1:d_w_q*3];
+					w_mult_operand2 <= ram_r_data[d_w_q*3-1:d_w_q*2];
+
+					r_state <= STATE_INIT2;
 					
-					r_addr_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_addr_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_addr_b12 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
-										    + ram_r_data[d_w_q*2-1:d_w_q];
-					r_addr_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
-										    + ram_r_data[d_w_q*2-1:d_w_q];
-										
+					
+					
+				end
+				
+				STATE_INIT2:
+				begin
+					r_state <= STATE_INIT3;
+					
 					r_addr_c11 <= ram_d - 1'b1;
 					r_addr_c12 <= ram_d - 2'b10;
 					r_addr_c21 <= ram_d - ram_r_data[d_w_q-1:0] - ram_r_data[0] - 1'b1;
 					r_addr_c22 <= ram_d - ram_r_data[d_w_q-1:0] - ram_r_data[0] - 2'b10;
 					
-					r_start_b11 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_start_b21 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]);
-					r_start_b12 <= 9'd2 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
-										    + ram_r_data[d_w_q*2-1:d_w_q];
-					r_start_b22 <= 9'd3 + (ram_r_data[d_w_q*4-1:d_w_q*3] * ram_r_data[d_w_q*3-1:d_w_q*2]) 
-										    + ram_r_data[d_w_q*2-1:d_w_q];
-
-					r_state <= STATE_RA11;
-					r_ram_addr <= 9'd2;
-					r_ram_we <= 'b0;
-					r_init_cycle_flag <= 1'b1;
-					
 					r_even_width_A <= ~ram_r_data[d_w_q*2];
 					r_even_height_B <= ~ram_r_data[d_w_q];
+					
+					r_init_cycle_flag <= 1'b1;
 				end
 				
+				STATE_INIT3:
+				begin
+					r_state <= STATE_INIT4;
+					
+					r_addr_b11 <= 9'd2 + (w_mult_product);
+					r_addr_b21 <= 9'd3 + (w_mult_product);
+					//r_addr_b12 <= 9'd2 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					//r_addr_b22 <= 9'd3 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					
+					r_start_b11 <= 9'd2 + (w_mult_product);
+					r_start_b21 <= 9'd3 + (w_mult_product);
+					//r_start_b12 <= 9'd2 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					//r_start_b22 <= 9'd3 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					
+					w_add_operand1 <= w_mult_product;
+					w_add_operand2 <= ram_r_data[d_w_q*2-1:d_w_q];
+				end
 				
+				STATE_INIT4:
+				begin
+					r_state <= STATE_RA11;
+					
+					r_addr_b12 <= 9'd2 + w_add_sum;
+					r_addr_b22 <= 9'd3 + w_add_sum;
+					
+					r_start_b12 <= 9'd2 + w_add_sum;
+					r_start_b22 <= 9'd3 + w_add_sum;
+					
+					r_ram_addr <= 9'd2;
+					r_ram_we <= 'b0;
+				end
 				
 				STATE_RA11:
 				begin
