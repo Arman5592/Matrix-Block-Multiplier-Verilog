@@ -1,4 +1,5 @@
 `timescale 1ps/1ps
+`define MANUAL
 
 module ram #(parameter width=32,
              parameter depth=512,
@@ -20,7 +21,24 @@ always @ (posedge clk) begin
 	end else
 		do <= mem[addr];
 end
-/*
+
+`ifndef MANUAL
+initial
+begin
+    $readmemb("input.txt", mem);
+
+    #10000;
+
+    f = $fopen("output.txt","w");
+
+      for (i = 511; i>=0; i=i-1) begin
+        $fwrite(f,"%b\n",mem[i]);
+     end
+
+     $fclose(f);
+end
+`endif
+`ifdef MANUAL
 initial
 begin
 	mem[0] = {8'd4,8'd4,8'd4,8'd2};
@@ -57,21 +75,7 @@ begin
 	mem[23] = 32'h40533333;
 	mem[24] = 32'h4059999a;
 	mem[25] = 32'h40600000;
-end*/
-
-initial
-begin
-    $readmemb("input.txt", mem);
-
-    #10000;
-
-    f = $fopen("output.txt","w");
-
-      for (i = 511; i>=0; i=i-1) begin
-        $fwrite(f,"%b\n",mem[i]);
-     end
-
-     $fclose(f);
 end
+`endif
 
 endmodule

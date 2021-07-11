@@ -4,7 +4,7 @@ run
 -ifn matrix_multiplier.prj
 -ofn matrix_multiplier
 -ofmt NGC
--p xa7a100t-2I-csg324
+-p xc6slx150-3-fgg676
 -top matrix_multiplier
 -opt_mode Speed
 -opt_level 1
@@ -40,7 +40,7 @@ run
 -use_dsp48 Auto
 -iobuf YES
 -max_fanout 100000
--bufg 32
+-bufg 16
 -register_duplication YES
 -register_balancing No
 -optimize_primitives NO

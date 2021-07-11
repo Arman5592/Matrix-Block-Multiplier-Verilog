@@ -4,9 +4,9 @@ module matrix_multiplier_tb ();
 
 
 reg clk,rst,start;
-wire done,error;
+wire done,error,block_complete,ram_w;
 
-matrix_multiplier multiplier(clk,rst,start,done,error);
+matrix_multiplier multiplier(clk,rst,start,done,error,ram_w,block_complete);
 
 always begin
 	clk = 'b1;

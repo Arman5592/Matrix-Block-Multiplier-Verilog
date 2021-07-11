@@ -67,9 +67,9 @@ reg r_even_width_A;
 reg r_even_height_B;
 reg [1:0] r_update_addr_c = 2'b00;
 
-// i neshon mide row e chandom az matrix chapi hastim
-// j neshon mide col e chandom az matrix rasti hastim
-// k counter e sevom hast (col e chap = row e rast)
+// i = A's row index
+// j = B's column index
+// k = A's column / B's row index
 
 reg       r_done;
 reg		 r_start_acc;
@@ -83,7 +83,7 @@ reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
-wire [d_w_q:0] w_mult_product;
+(*max_fanout=5*)wire [d_w_q:0] w_mult_product;
 reg [d_w_q-1:0] w_mult_operand1;
 reg [d_w_q-1:0] w_mult_operand2;
 
@@ -145,11 +145,11 @@ parameter STATE_WRITEBACK12 = 5'hF;
 parameter STATE_WRITEBACK21 = 5'h10;
 parameter STATE_WRITEBACK22 = 5'h11;
 
-parameter STATE_INIT2		 = 5'h12;//to increase operational frequency
+parameter STATE_INIT2		 = 5'h12;
 parameter STATE_INIT3		 = 5'h13;
 parameter STATE_INIT4		 = 5'h1D;
 
-parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages vvv
+parameter STATE_RA11_P		 = 5'h14;//pipelined fetch stages 
 parameter STATE_RA12_P		 = 5'h15;
 parameter STATE_RA21_P		 = 5'h16;
 parameter STATE_RA22_P		 = 5'h17;
@@ -160,10 +160,10 @@ parameter STATE_RB22_P		 = 5'h1B;
 
 
 parameter STATE_CLIMIT	    = 5'h1C;
+parameter STATE_RBF			 = 5'h1E;
+parameter STATE_RBF_P		 = 5'h1F;
 
 
-parameter DELAY_MAC			 = 5'd23;
-parameter DELAY_ACC			 = 5'd6; //HOSH! ina parameter e module beshe | kollan vojodeshon kheiliam pointi nadare.
 
 always @ (posedge clk)
 begin
@@ -188,7 +188,7 @@ begin
 				
 				STATE_INIT:
 				begin
-					//inja addr e ram 0 bode kafie read konim
+					//current ram address is 0
 					r_M1 <= ram_r_data[d_w_q*4-1:d_w_q*3];
 					r_N1 <= ram_r_data[d_w_q*3-1:d_w_q*2];
 					r_M2 <= ram_r_data[d_w_q*2-1:d_w_q];
@@ -239,13 +239,11 @@ begin
 					
 					r_addr_b11 <= 9'd2 + (w_mult_product);
 					r_addr_b21 <= 9'd3 + (w_mult_product);
-					//r_addr_b12 <= 9'd2 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
-					//r_addr_b22 <= 9'd3 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					
 					
 					r_start_b11 <= 9'd2 + (w_mult_product);
 					r_start_b21 <= 9'd3 + (w_mult_product);
-					//r_start_b12 <= 9'd2 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
-					//r_start_b22 <= 9'd3 + (w_mult_product) + ram_r_data[d_w_q*2-1:d_w_q];
+					
 					
 					w_add_operand1 <= w_mult_product;
 					w_add_operand2 <= ram_r_data[d_w_q*2-1:d_w_q];
@@ -258,32 +256,31 @@ begin
 				
 				STATE_INIT4:
 				begin
-					
-					r_state <= STATE_RA11;
-					
-					//r_addr_b12 <= w_add_sum + 9'd2;
-					//r_addr_b22 <= w_add_sum + 9'd3;
-					r_addr_b12 <= w_add_sum;
-					r_addr_b22 <= w_add2_sum;
-					//r_start_b12 <= w_add_sum + 9'd2;
-					//r_start_b22 <= w_add_sum + 9'd3;	
-					r_start_b12 <= w_add_sum;
-					r_start_b22 <= w_add2_sum;
-					
-					r_ram_addr <= 9'd2;
-					r_ram_we <= 'b0;
-					
+					if(r_N1!=r_M2) begin
+						r_err <= 1'b1;	//raise error
+						r_state <= STATE_IDLE;
+					end 
+					else begin
+						r_state <= STATE_RA11;
+						
+						
+						r_addr_b12 <= w_add_sum;
+						r_addr_b22 <= w_add2_sum;
+							
+						r_start_b12 <= w_add_sum;
+						r_start_b22 <= w_add2_sum;
+						
+						r_ram_addr <= 9'd2;
+						r_ram_we <= 'b0;
+					end
+
 				end
 				
 				
 				STATE_RA11:
 				begin
 					
-					if(r_N1!=r_M2) begin
-						r_err <= 1'b1;	//raise error
-						r_state <= STATE_IDLE;
-					end 
-					else if(r_limit_i == r_counter_i)
+					if(r_limit_i == r_counter_i)
 						r_state <= STATE_CLIMIT;
 					else 	begin
 						r_ram_addr <= r_addr_a12;
@@ -291,8 +288,7 @@ begin
 					end
 				end
 				
-				
-				
+
 				STATE_RA12:
 				begin
 					r_a11 <= ram_r_data;
@@ -317,7 +313,6 @@ begin
 				end
 				
 				
-				
 				STATE_RA22:
 				begin
 					
@@ -330,8 +325,7 @@ begin
 						r_ram_addr <= r_addr_b11;
 				end
 				
-				
-				
+	
 				STATE_RB11:
 				begin
 				
@@ -372,31 +366,36 @@ begin
 						r_b21 <= 'b0;
 					else
 						r_b21 <= ram_r_data;
-						r_state <= STATE_BEGINMAC;
+						r_state <= STATE_RBF;
 						r_ram_addr <= r_addr_b22;
 					
 					
+				end
+				
+				STATE_RBF:
+				begin
+					if((r_limit_k==r_counter_k && r_M2[0]) || r_limit_j==r_counter_j && r_N2[0])
+						r_b22 <= 'b0;
+					else
+						r_b22 <= ram_r_data;
+					r_state <= STATE_BEGINMAC;
 				end
 				
 				
 				STATE_BEGINMAC:
 				begin
 					
-					if((r_limit_k==r_counter_k && r_M2[0]) || r_limit_j==r_counter_j && r_N2[0])
-						r_b22 <= 'b0;
-					else
-						r_b22 <= ram_r_data;
+					r_state <= STATE_RA11_P;
 					
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
-					r_state <= STATE_WAIT;
-					r_delay <= DELAY_MAC;
+					r_state <= STATE_RA11_P;
 					r_init_cycle_flag <= 1'b0;
 
 					r_counter_k <= r_counter_k + 1'b1;
 					
 					if(r_counter_k == r_limit_k && (!r_init_cycle_flag)) begin 
 					
-						if(r_counter_j == r_limit_j) begin  //inja yani i ziad shode 
+						if(r_counter_j == r_limit_j) begin  //i increment (j and k are @ limits) 
 						
 							r_counter_k <= 'b0;
 							r_counter_j <= 'b0;
@@ -412,13 +411,13 @@ begin
 							r_addr_b21 <= r_start_b21;
 							r_addr_b22 <= r_start_b22;
 							
-							
+							r_ram_addr <= r_addr_a22 + r_even_width_A;
 							r_update_addr_c <= 2'b10;
 								
 							
 						end
 						
-						else begin //inja yani j ziad shode
+						else begin //j increment (only k @ limit)
 							r_counter_k <= 'b0;
 							r_counter_j <= r_counter_j + 1'b1;
 							
@@ -432,11 +431,12 @@ begin
 							r_addr_b21 <= r_addr_b22 + r_even_height_B + 1'b1;
 							r_addr_b22 <= r_addr_b22 + r_M2 + r_even_height_B + 1'b1;
 							
+							r_ram_addr <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
 							r_update_addr_c <= 2'b01;	
 								
 						end
 						
-					end else begin // inja yani k ziad shode
+					end else begin //k increment
 						r_update_addr_c <= 2'b00;
 						
 						r_addr_a11 <= r_addr_a12 + 1'b1;
@@ -444,17 +444,127 @@ begin
 						r_addr_a21 <= r_addr_a22 + 1'b1;
 						r_addr_a22 <= r_addr_a22 + 2'b10;
 						
+						r_ram_addr <= r_addr_a12 + 1'b1;
+						
 						r_addr_b11 <= r_addr_b21 + 1'b1;
 						r_addr_b12 <= r_addr_b22 + 1'b1;
 						r_addr_b21 <= r_addr_b21 + 2'b10;
 						r_addr_b22 <= r_addr_b22 + 2'b10;
 					end
+					
 				end
 				
-				//inja mishe eyne adam omad ye seri load e dge anjam dad.
+				//pipeline fetching stages:
+				
+				STATE_RA11_P:
+				begin
+					r_start_mac <= 1'b0;
+					r_start_acc <= 1'b0;
+					
+					
+					r_ram_addr <= r_addr_a12;
+					r_state <= STATE_RA12_P;
+				end
+				
+
+				STATE_RA12_P:
+				begin
+					r_a11 <= ram_r_data;
+					r_state <= STATE_RA21_P;
+					r_ram_addr <= r_addr_a21;
+					
+					r_start_acc <= 1'b0;
+				end
+				
+				
+				
+				STATE_RA21_P:
+				begin
+					
+					if(r_limit_k==r_counter_k && r_N1[0])
+						r_a12 <= 'b0;
+					else 
+						r_a12 <= ram_r_data;
+						
+						r_state <= STATE_RA22_P;
+						r_ram_addr <= r_addr_a22;
+				end
+				
+				
+				STATE_RA22_P:
+				begin
+					
+					if(r_limit_i==(r_counter_i+1'b1) && r_M1[0]) 
+						r_a21 <= 'b0;
+					else
+						r_a21 <= ram_r_data;
+					
+						r_state <= STATE_RB11_P;
+						r_ram_addr <= r_addr_b11;
+				end
+				
+	
+				STATE_RB11_P:
+				begin
+				
+					if((r_limit_i==(r_counter_i+1'b1) && r_M1[0]) || r_limit_k==r_counter_k && r_N1[0])
+						r_a22 <= 'b0;
+					else
+						r_a22 <= ram_r_data;
+						
+					r_ram_addr <= r_addr_b12;
+					r_state <= STATE_RB12_P;
+				end
+				
+				STATE_RB12_P:
+				begin
+					r_b11 <= ram_r_data;
+					r_state <= STATE_RB21_P;
+					r_ram_addr <= r_addr_b21;	
+				end
+				
+				
+				
+				STATE_RB21_P:
+				begin
+					if(r_limit_j==r_counter_j && r_N2[0])
+						r_b12 <= 'b0;
+					else
+						r_b12 <= ram_r_data;
+						
+						r_state <= STATE_RB22_P;
+						r_ram_addr <= r_addr_b22;
+					
+				end
+				
+				STATE_RB22_P:
+				begin
+					
+					if(r_limit_k==r_counter_k && r_M2[0])
+						r_b21 <= 'b0;
+					else
+						r_b21 <= ram_r_data;
+
+					r_ram_addr <= r_addr_b22;
+					r_state <= STATE_RBF_P;
+				end
+				
+				STATE_RBF_P:
+				begin
+					if((r_limit_k==r_counter_k && r_M2[0]) || r_limit_j==r_counter_j && r_N2[0])
+						r_b22 <= 'b0;
+					else
+						r_b22 <= ram_r_data;
+						
+					
+					
+					r_state <= STATE_WAIT;
+				end
+				
+				
 				STATE_WAIT:
 				begin
-					//if((|r_delay)==1'b0) begin
+					r_reset_acc <= 1'b0;
 					if(done_mac) begin
 						r_state <= STATE_ACCUMULATE;
 						
@@ -464,13 +574,7 @@ begin
 						r_res22 <= c_22;
 						
 					end
-					else if(r_delay == 5'b10110) begin
-						r_start_mac <= 1'b0;
-						r_delay <= r_delay - 1'b1;
-						r_state <= STATE_WAIT;
-					end
 					else begin
-						r_delay <= r_delay - 1'b1;
 						r_state <= STATE_WAIT;
 					end
 				end
@@ -487,14 +591,11 @@ begin
 					if(r_writeback_flag) begin
 						r_writeback_flag <= 1'b0;
 						r_state <= STATE_WAIT2;
-						r_delay <= DELAY_ACC;
 					end
 					else begin
 						r_ram_addr <= r_addr_a11;
-						r_state <= STATE_RA11;//badan bere stage haye pipeline shode
-					end
-						
-					
+						r_state <= STATE_BEGINMAC;
+					end	
 						
 					r_start_acc <= 1'b1;
 
@@ -541,11 +642,14 @@ begin
 				
 				STATE_WRITEBACK22:
 				begin
-					r_ram_addr <= r_addr_a11;
-					r_state <= STATE_RA11;
+					if(r_limit_i == r_counter_i)
+						r_state <= STATE_CLIMIT;
+					else
+						r_state <= STATE_BEGINMAC;
 					r_ram_we <= 'b0;
 					r_reset_acc <= 1'b1;
 					r_update_addr_c <= 2'b00;
+					r_writeback_flag <= 1'b0;
 					
 					if(r_update_addr_c == 2'b10) begin
 						r_addr_c11 <= r_addr_c11 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
@@ -572,27 +676,7 @@ begin
 					r_state <= STATE_IDLE;//'self-starting'
 				end
 				
-				//pipeline fetching stages:
 				
-				STATE_RA11_P:
-				begin
-				
-				end
-				
-				STATE_RA12_P:
-				begin
-				
-				end
-				
-				STATE_RA21_P:
-				begin
-				
-				end
-				
-				STATE_RA22_P:
-				begin
-				
-				end
 			
 		endcase
 	end

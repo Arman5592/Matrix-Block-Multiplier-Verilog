@@ -1,3 +1,6 @@
+`timescale 1ps/1ps
+`define MANUAL
+
 module ram #(parameter width=32,
              parameter depth=512,
 				 parameter dlog = $clog2(depth))
@@ -8,6 +11,7 @@ module ram #(parameter width=32,
 
 				 
 reg [width-1:0] mem [depth-1:0];
+integer f=0,i=0;
 
 always @ (posedge clk) begin
 	
@@ -18,9 +22,26 @@ always @ (posedge clk) begin
 		do <= mem[addr];
 end
 
+`ifndef MANUAL
 initial
 begin
-	mem[0] = {8'd4,8'd3,8'd3,8'd4};
+    $readmemb("input.txt", mem);
+
+    #10000;
+
+    f = $fopen("output.txt","w");
+
+      for (i = 511; i>=0; i=i-1) begin
+        $fwrite(f,"%b\n",mem[i]);
+     end
+
+     $fclose(f);
+end
+`endif
+`ifdef MANUAL
+initial
+begin
+	mem[0] = {8'd4,8'd4,8'd4,8'd2};
 	mem[1] = 32'h00000000;
 	
 	mem[2] = 32'h3f99999a;
@@ -55,5 +76,6 @@ begin
 	mem[24] = 32'h4059999a;
 	mem[25] = 32'h40600000;
 end
+`endif
 
 endmodule
