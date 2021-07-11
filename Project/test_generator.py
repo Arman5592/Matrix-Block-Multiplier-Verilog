@@ -14,7 +14,7 @@ dim2 = int(input("enter dimension 2: "))
 dim3 = int(input("enter dimension 3: "))
 mat1 = np.random.randn(dim1, dim2).astype('f')
 mat2 = np.random.randn(dim2, dim3).astype('f')
-mul = np.matmul(mat1, mat2)
+mul = np.matmul(mat1, mat2).astype('f')
 
 if DEBUG:
     print('Dimensions:')
@@ -38,7 +38,7 @@ if DEBUG:
     print(mat2)
     print(mul)
 else:
-    with open('inputs/input.txt', 'w') as f:
+    with open('input.txt', 'w') as f:
         f.write(f'{dim1:08b}{dim2:08b}{dim2:08b}{dim3:08b}\n')
         f.write('00000000000000000000000000000000\n')
 
@@ -59,3 +59,21 @@ else:
 
         f.write('00000000000000000000000000000000')
 
+    with open('expected.txt', 'w') as f:
+        with open('input.txt', 'r') as inp:
+            lines = inp.readlines()
+            lines.reverse()
+            counter = 0
+            for i in range(dim1):
+                for j in range(dim3):
+                    lines[counter] = f'{binary(mul[i][j])}\n'
+                    counter += 1
+            f.writelines(lines)
+
+
+def compare_output_with_expected():
+    with open('output.txt', 'r') as file:
+        output = file.read()
+    with open('expected.txt', 'r') as file:
+        expected = file.read()
+    return output.strip() == expected.strip()
