@@ -4,13 +4,13 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.08 secs
+Total CPU time to Xst completion: 0.09 secs
  
 --> Parameter xsthdpdir set to xst
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.08 secs
+Total CPU time to Xst completion: 0.09 secs
  
 --> Reading design: matrix_multiplier.prj
 
@@ -55,7 +55,7 @@ FSM Encoding Algorithm             : Auto
 Safe Implementation                : No
 FSM Style                          : LUT
 RAM Extraction                     : Yes
-RAM Style                          : Auto
+RAM Style                          : Block
 ROM Extraction                     : Yes
 Shift Register Extraction          : YES
 ROM Style                          : Auto
@@ -81,7 +81,7 @@ Equivalent register Removal        : YES
 
 ---- General Options
 Optimization Goal                  : Speed
-Optimization Effort                : 1
+Optimization Effort                : 2
 Power Reduction                    : NO
 Keep Hierarchy                     : No
 Netlist Hierarchy                  : As_Optimized
@@ -805,6 +805,10 @@ INFO:Xst:3226 - The RAM <memory/Mram_mem> will be implemented as a BLOCK RAM, ab
     -----------------------------------------------------------------------
     | optimization       | speed                               |          |
     -----------------------------------------------------------------------
+INFO:Xst:2774 - HDL ADVISOR - MAX_FANOUT property attached to signal control_unit/r_addr_a22<0> may hinder XST clustering optimizations.
+INFO:Xst:2774 - HDL ADVISOR - MAX_FANOUT property attached to signal control_unit/r_addr_b22<0> may hinder XST clustering optimizations.
+INFO:Xst:2774 - HDL ADVISOR - MAX_FANOUT property attached to signal control_unit/r_addr_c12<0> may hinder XST clustering optimizations.
+INFO:Xst:2774 - HDL ADVISOR - MAX_FANOUT property attached to signal control_unit/r_addr_c22<0> may hinder XST clustering optimizations.
 Unit <matrix_multiplier> synthesized (advanced).
 
 Synthesizing (advanced) Unit <single_multiplier>.
@@ -1078,6 +1082,16 @@ FlipFlop control_unit/r_addr_b22_6 has been replicated 1 time(s)
 FlipFlop control_unit/r_addr_b22_7 has been replicated 1 time(s)
 FlipFlop control_unit/r_addr_c11_3 has been replicated 1 time(s)
 FlipFlop control_unit/r_addr_c12_3 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c21_1 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c21_2 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c21_3 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c21_4 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c21_5 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c22_1 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c22_2 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c22_3 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c22_4 has been replicated 1 time(s)
+FlipFlop control_unit/r_addr_c22_5 has been replicated 1 time(s)
 
 Final Macro Processing ...
 
@@ -1085,8 +1099,8 @@ Final Macro Processing ...
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 5635
- Flip-Flops                                            : 5635
+# Registers                                            : 5645
+ Flip-Flops                                            : 5645
 
 =========================================================================
 
@@ -1109,23 +1123,23 @@ Top Level Output File Name         : matrix_multiplier.ngc
 
 Primitive and Black Box Usage:
 ------------------------------
-# BELS                             : 8595
+# BELS                             : 8613
 #      BUF                         : 13
 #      GND                         : 1
 #      INV                         : 18
 #      LUT1                        : 186
-#      LUT2                        : 622
-#      LUT3                        : 788
-#      LUT4                        : 1045
-#      LUT5                        : 2091
-#      LUT6                        : 2121
+#      LUT2                        : 648
+#      LUT3                        : 758
+#      LUT4                        : 1058
+#      LUT5                        : 2073
+#      LUT6                        : 2151
 #      MUXCY                       : 902
-#      MUXF7                       : 31
+#      MUXF7                       : 28
 #      VCC                         : 1
 #      XORCY                       : 776
-# FlipFlops/Latches                : 5635
+# FlipFlops/Latches                : 5645
 #      FD                          : 46
-#      FDE                         : 5294
+#      FDE                         : 5304
 #      FDR                         : 102
 #      FDRE                        : 192
 #      FDS                         : 1
@@ -1146,15 +1160,15 @@ Selected Device : 6slx150fgg676-3
 
 
 Slice Logic Utilization: 
- Number of Slice Registers:            5635  out of  184304     3%  
- Number of Slice LUTs:                 6871  out of  92152     7%  
-    Number used as Logic:              6871  out of  92152     7%  
+ Number of Slice Registers:            5645  out of  184304     3%  
+ Number of Slice LUTs:                 6892  out of  92152     7%  
+    Number used as Logic:              6892  out of  92152     7%  
 
 Slice Logic Distribution: 
- Number of LUT Flip Flop pairs used:   9371
-   Number with an unused Flip Flop:    3736  out of   9371    39%  
-   Number with an unused LUT:          2500  out of   9371    26%  
-   Number of fully used LUT-FF pairs:  3135  out of   9371    33%  
+ Number of LUT Flip Flop pairs used:   9355
+   Number with an unused Flip Flop:    3710  out of   9355    39%  
+   Number with an unused LUT:          2463  out of   9355    26%  
+   Number of fully used LUT-FF pairs:  3182  out of   9355    34%  
    Number of unique control sets:       223
 
 IO Utilization: 
@@ -1188,7 +1202,7 @@ Clock Information:
 -----------------------------------+------------------------+-------+
 Clock Signal                       | Clock buffer(FF name)  | Load  |
 -----------------------------------+------------------------+-------+
-clk                                | BUFGP                  | 5669  |
+clk                                | BUFGP                  | 5679  |
 -----------------------------------+------------------------+-------+
 
 Asynchronous Control Signals Information:
@@ -1211,7 +1225,7 @@ All values displayed in nanoseconds (ns)
 =========================================================================
 Timing constraint: Default period analysis for Clock 'clk'
   Clock period: 15.993ns (frequency: 62.528MHz)
-  Total number of paths / destination ports: 1879862 / 12490
+  Total number of paths / destination ports: 1878922 / 12510
 -------------------------------------------------------------------------
 Delay:               15.993ns (Levels of Logic = 2)
   Source:            base/multiplier_a22_b22/Mmult_a_m[23]_b_m[23]_MuLt_53_OUT (DSP)
@@ -1233,7 +1247,7 @@ Delay:               15.993ns (Levels of Logic = 2)
 
 =========================================================================
 Timing constraint: Default OFFSET IN BEFORE for Clock 'clk'
-  Total number of paths / destination ports: 911 / 902
+  Total number of paths / destination ports: 921 / 912
 -------------------------------------------------------------------------
 Offset:              6.693ns (Levels of Logic = 3)
   Source:            rst (PAD)
@@ -1287,14 +1301,14 @@ clk            |   15.993|         |         |         |
 =========================================================================
 
 
-Total REAL time to Xst completion: 27.00 secs
-Total CPU time to Xst completion: 27.03 secs
+Total REAL time to Xst completion: 30.00 secs
+Total CPU time to Xst completion: 29.50 secs
  
 --> 
 
-Total memory usage is 4590056 kilobytes
+Total memory usage is 4598824 kilobytes
 
 Number of errors   :    0 (   0 filtered)
 Number of warnings :   78 (   0 filtered)
-Number of infos    :  122 (   0 filtered)
+Number of infos    :  126 (   0 filtered)
 

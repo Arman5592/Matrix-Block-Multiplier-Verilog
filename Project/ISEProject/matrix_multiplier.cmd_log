@@ -17,3 +17,4 @@ xst -intstyle ise -ifn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Projec
 xst -intstyle ise -ifn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.xst" -ofn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.syr" 
 xst -intstyle ise -ifn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.xst" -ofn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.syr" 
 xst -intstyle ise -ifn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.xst" -ofn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.syr" 
+xst -intstyle ise -ifn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.xst" -ofn "C:/Users/arman/Desktop/dsd_project/DSDProject_992/Project/ISEProject/matrix_multiplier.syr" 

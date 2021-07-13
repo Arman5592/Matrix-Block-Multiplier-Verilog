@@ -7,7 +7,7 @@ run
 -p xc6slx150-3-fgg676
 -top matrix_multiplier
 -opt_mode Speed
--opt_level 1
+-opt_level 2
 -power NO
 -iuc NO
 -keep_hierarchy No
@@ -29,7 +29,7 @@ run
 -safe_implementation No
 -fsm_style LUT
 -ram_extract Yes
--ram_style Auto
+-ram_style Block
 -rom_extract Yes
 -shreg_extract YES
 -rom_style Auto

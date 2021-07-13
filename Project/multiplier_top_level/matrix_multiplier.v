@@ -17,7 +17,7 @@ wire reset_acc,start_acc,done_acc;
 assign ram_writing = ram_we;
 
 
-matrix_mul_cu 		control_unit(.clk(clk),
+matrix_mul_cu 	#(32,512) control_unit(.clk(clk),
 										 .rst(rst),
 										 .ram_r_data(ram_r_data),
 										 .start(start),
@@ -54,7 +54,7 @@ matrix_mul_cu 		control_unit(.clk(clk),
 										 .block_mac_complete(block_complete)
 										 );
 									 
-ram			  		memory	(.clk(clk),
+ram	#(32,512)	memory	(.clk(clk),
 									 .do(ram_r_data),
 									 .addr(ram_addr),
 									 .we(ram_we),

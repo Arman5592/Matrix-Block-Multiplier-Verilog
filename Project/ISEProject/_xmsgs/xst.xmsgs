@@ -382,6 +382,18 @@
 
 <msg type="info" file="Xst" num="3226" delta="old" >The RAM &lt;<arg fmt="%s" index="1">memory/Mram_mem</arg>&gt; will be implemented as a BLOCK RAM, absorbing the following register(s):</msg>
 
+<msg type="info" file="Xst" num="2774" delta="new" >HDL ADVISOR - <arg fmt="%s" index="1">MAX_FANOUT</arg> <arg fmt="%s" index="2">property</arg> attached to signal <arg fmt="%s" index="3">control_unit/r_addr_a22&lt;0&gt;</arg> may hinder XST clustering optimizations.
+</msg>
+
+<msg type="info" file="Xst" num="2774" delta="new" >HDL ADVISOR - <arg fmt="%s" index="1">MAX_FANOUT</arg> <arg fmt="%s" index="2">property</arg> attached to signal <arg fmt="%s" index="3">control_unit/r_addr_b22&lt;0&gt;</arg> may hinder XST clustering optimizations.
+</msg>
+
+<msg type="info" file="Xst" num="2774" delta="new" >HDL ADVISOR - <arg fmt="%s" index="1">MAX_FANOUT</arg> <arg fmt="%s" index="2">property</arg> attached to signal <arg fmt="%s" index="3">control_unit/r_addr_c12&lt;0&gt;</arg> may hinder XST clustering optimizations.
+</msg>
+
+<msg type="info" file="Xst" num="2774" delta="new" >HDL ADVISOR - <arg fmt="%s" index="1">MAX_FANOUT</arg> <arg fmt="%s" index="2">property</arg> attached to signal <arg fmt="%s" index="3">control_unit/r_addr_c22&lt;0&gt;</arg> may hinder XST clustering optimizations.
+</msg>
+
 <msg type="info" file="Xst" num="2385" delta="old" >HDL ADVISOR - You can improve the performance of the multiplier <arg fmt="%s" index="1">Mmult_a_m[23]_b_m[23]_MuLt_53_OUT</arg> by adding <arg fmt="%d" index="2">7</arg> register level(s).
 </msg>
 

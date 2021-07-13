@@ -28,7 +28,6 @@ module matrix_mul_cu     #(parameter data_w = 32,
 // 1: reserved for metadata
 
 reg [4:0] r_state;//machine state
-reg [4:0] r_delay;//for waiting intervals
 
 reg [d_w_q-1:0] r_M1;
 reg [d_w_q-1:0] r_N1;
@@ -83,7 +82,7 @@ reg [data_w-1:0] r_a11,r_a12,r_a21,r_a22,
 					  r_res11,r_res12,r_res21,r_res22;
 reg		 r_start_mac;
 
-(*max_fanout=5*)wire [d_w_q:0] w_mult_product;
+wire [d_w_q:0] w_mult_product;
 reg [d_w_q-1:0] w_mult_operand1;
 reg [d_w_q-1:0] w_mult_operand2;
 
@@ -385,72 +384,12 @@ begin
 				STATE_BEGINMAC:
 				begin
 					
-					r_state <= STATE_RA11_P;
 					
 					r_start_mac <= 1'b1;//start multiplication & accumulation (2x2)
 					r_state <= STATE_RA11_P;
 					r_init_cycle_flag <= 1'b0;
 
-					r_counter_k <= r_counter_k + 1'b1;
-					
-					if(r_counter_k == r_limit_k && (!r_init_cycle_flag)) begin 
-					
-						if(r_counter_j == r_limit_j) begin  //i increment (j and k are @ limits) 
-						
-							r_counter_k <= 'b0;
-							r_counter_j <= 'b0;
-							r_counter_i <= r_counter_i + 1'b1;
-							
-							r_addr_a11 <= r_addr_a22 + r_even_width_A; 
-							r_addr_a12 <= r_addr_a22 + r_even_width_A + 1'b1;
-							r_addr_a21 <= r_addr_a22 + r_N1 + r_even_width_A;
-							r_addr_a22 <= r_addr_a22 + r_N1 + r_even_width_A + 1'b1;
-							
-							r_addr_b11 <= r_start_b11;
-							r_addr_b12 <= r_start_b12;
-							r_addr_b21 <= r_start_b21;
-							r_addr_b22 <= r_start_b22;
-							
-							r_ram_addr <= r_addr_a22 + r_even_width_A;
-							r_update_addr_c <= 2'b10;
-								
-							
-						end
-						
-						else begin //j increment (only k @ limit)
-							r_counter_k <= 'b0;
-							r_counter_j <= r_counter_j + 1'b1;
-							
-							r_addr_a11 <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
-							r_addr_a12 <= r_addr_a12 - r_N1 + r_even_width_A + 1'b1;
-							r_addr_a21 <= r_addr_a21 - r_N1 + r_even_width_A + 1'b1;
-							r_addr_a22 <= r_addr_a22 - r_N1 + r_even_width_A + 1'b1;
-						
-							r_addr_b11 <= r_addr_b22 + r_even_height_B;
-							r_addr_b12 <= r_addr_b22 + r_M2 + r_even_height_B;
-							r_addr_b21 <= r_addr_b22 + r_even_height_B + 1'b1;
-							r_addr_b22 <= r_addr_b22 + r_M2 + r_even_height_B + 1'b1;
-							
-							r_ram_addr <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
-							r_update_addr_c <= 2'b01;	
-								
-						end
-						
-					end else begin //k increment
-						r_update_addr_c <= 2'b00;
-						
-						r_addr_a11 <= r_addr_a12 + 1'b1;
-						r_addr_a12 <= r_addr_a12 + 2'b10;
-						r_addr_a21 <= r_addr_a22 + 1'b1;
-						r_addr_a22 <= r_addr_a22 + 2'b10;
-						
-						r_ram_addr <= r_addr_a12 + 1'b1;
-						
-						r_addr_b11 <= r_addr_b21 + 1'b1;
-						r_addr_b12 <= r_addr_b22 + 1'b1;
-						r_addr_b21 <= r_addr_b21 + 2'b10;
-						r_addr_b22 <= r_addr_b22 + 2'b10;
-					end
+					update_addr();
 					
 				end
 				
@@ -604,7 +543,6 @@ begin
 				
 				STATE_WAIT2:
 				begin
-					//if((|r_delay)==1'b0) begin
 					if(done_acc) begin
 						r_state <= STATE_WRITEBACK11;
 						r_ram_we <= 'b1;
@@ -613,7 +551,6 @@ begin
 					end
 					
 					else begin
-						r_delay <= r_delay - 1'b1;
 						r_state <= STATE_WAIT2;
 					end
 				end
@@ -681,5 +618,70 @@ begin
 		endcase
 	end
 end
+
+	task update_addr;
+		begin
+			r_counter_k <= r_counter_k + 1'b1;
+					
+			if(r_counter_k == r_limit_k && (!r_init_cycle_flag)) begin 
+			
+				if(r_counter_j == r_limit_j) begin  //i increment (j and k are @ limits) 
+				
+					r_counter_k <= 'b0;
+					r_counter_j <= 'b0;
+					r_counter_i <= r_counter_i + 1'b1;
+					
+					r_addr_a11 <= r_addr_a22 + r_even_width_A; 
+					r_addr_a12 <= r_addr_a22 + r_even_width_A + 1'b1;
+					r_addr_a21 <= r_addr_a22 + r_N1 + r_even_width_A;
+					r_addr_a22 <= r_addr_a22 + r_N1 + r_even_width_A + 1'b1;
+					
+					r_addr_b11 <= r_start_b11;
+					r_addr_b12 <= r_start_b12;
+					r_addr_b21 <= r_start_b21;
+					r_addr_b22 <= r_start_b22;
+					
+					r_ram_addr <= r_addr_a22 + r_even_width_A;
+					r_update_addr_c <= 2'b10;
+						
+					
+				end
+				
+				else begin //j increment (only k @ limit)
+					r_counter_k <= 'b0;
+					r_counter_j <= r_counter_j + 1'b1;
+					
+					r_addr_a11 <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
+					r_addr_a12 <= r_addr_a12 - r_N1 + r_even_width_A + 1'b1;
+					r_addr_a21 <= r_addr_a21 - r_N1 + r_even_width_A + 1'b1;
+					r_addr_a22 <= r_addr_a22 - r_N1 + r_even_width_A + 1'b1;
+				
+					r_addr_b11 <= r_addr_b22 + r_even_height_B;
+					r_addr_b12 <= r_addr_b22 + r_M2 + r_even_height_B;
+					r_addr_b21 <= r_addr_b22 + r_even_height_B + 1'b1;
+					r_addr_b22 <= r_addr_b22 + r_M2 + r_even_height_B + 1'b1;
+					
+					r_ram_addr <= r_addr_a11 - r_N1 + r_even_width_A + 1'b1;
+					r_update_addr_c <= 2'b01;	
+						
+				end
+				
+			end else begin //k increment
+				r_update_addr_c <= 2'b00;
+				
+				r_addr_a11 <= r_addr_a12 + 1'b1;
+				r_addr_a12 <= r_addr_a12 + 2'b10;
+				r_addr_a21 <= r_addr_a22 + 1'b1;
+				r_addr_a22 <= r_addr_a22 + 2'b10;
+				
+				r_ram_addr <= r_addr_a12 + 1'b1;
+				
+				r_addr_b11 <= r_addr_b21 + 1'b1;
+				r_addr_b12 <= r_addr_b22 + 1'b1;
+				r_addr_b21 <= r_addr_b21 + 2'b10;
+				r_addr_b22 <= r_addr_b22 + 2'b10;
+			end
+		end
+	endtask
 
 endmodule
