@@ -589,10 +589,10 @@ begin
 					r_writeback_flag <= 1'b0;
 					
 					if(r_update_addr_c == 2'b10) begin
-						r_addr_c11 <= r_addr_c11 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
-						r_addr_c12 <= r_addr_c12 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
-						r_addr_c21 <= r_addr_c21 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
-						r_addr_c22 <= r_addr_c22 - {r_N2[d_w_q-1:1],1'b0} - 2'b10;
+						r_addr_c11 <= r_addr_c22 - 1'b1;
+						r_addr_c12 <= r_addr_c22 - 2'b10;
+						r_addr_c21 <= r_addr_c22 - 1'b1 - r_N2 - r_N2[0];
+						r_addr_c22 <= r_addr_c22 - 2'b10 - r_N2 - r_N2[0];
 					end else if (r_update_addr_c == 2'b01) begin
 						r_addr_c11 <= r_addr_c11 - 2'b10;
 						r_addr_c12 <= r_addr_c12 - 2'b10;

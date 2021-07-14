@@ -41,7 +41,7 @@ end
 `ifdef MANUAL
 initial
 begin
-	mem[0] = {8'd4,8'd4,8'd4,8'd2};
+	mem[0] = {8'd3,8'd3,8'd3,8'd3};
 	mem[1] = 32'h00000000;
 	
 	mem[2] = 32'h3f99999a;
