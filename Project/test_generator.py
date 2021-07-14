@@ -59,7 +59,8 @@ if __name__ == '__main__':
     dim3 = int(input("enter dimension 3: "))
     mat1 = np.random.randn(dim1, dim2).astype('f')
     mat2 = np.random.randn(dim2, dim3).astype('f')
-    mul = np.matmul(mat1, mat2).astype('f')
+
+    multiply = np.matmul(mat1, mat2).astype('f')
 
     print("First Matrix: \n")
     for i in range(dim1):
@@ -76,7 +77,7 @@ if __name__ == '__main__':
     print("\nResult: \n")
     for i in range(dim1):
         for j in range(dim3):
-            print(f"{mul[i][j]}  |", end='')
+            print(f"{multiply[i][j]}  |", end='')
         print()
 
     if DEBUG:
@@ -99,7 +100,7 @@ if __name__ == '__main__':
 
         print(mat1)
         print(mat2)
-        print(mul)
+        print(multiply)
     else:
         with open('input.txt', 'w') as f:
             f.write(f'{dim1:08b}{dim2:08b}{dim2:08b}{dim3:08b}\n')
@@ -121,6 +122,21 @@ if __name__ == '__main__':
                 counter += 1
 
             f.write('00000000000000000000000000000000')
+
+        if dim1 % 2 == 1:
+            mat1 = np.append(mat1, np.zeros((1, dim2), dtype=np.float32), axis=0)
+            dim1 += 1
+
+        if dim2 % 2 == 1:
+            mat1 = np.append(mat1, np.zeros((dim1, 1), dtype=np.float32), axis=1)
+            mat2 = np.append(mat2, np.zeros((1, dim3), dtype=np.float32), axis=0)
+            dim2 += 1
+
+        if dim3 % 2 == 1:
+            mat2 = np.append(mat2, np.zeros((dim2, 1), dtype=np.float32), axis=1)
+            dim3 += 1
+
+        mul = np.matmul(mat1, mat2).astype('f')
 
         with open('expected.txt', 'w') as f:
             with open('input.txt', 'r') as inp:
